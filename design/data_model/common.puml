@@ -1,0 +1,30 @@
+@startuml
+
+class User {
+    String username
+    String email
+    String password
+}
+
+class Challenge {
+    long id
+    String name
+    String description
+    User author
+    Date created
+    String template
+    String testClass
+}
+
+class Solution {
+    Challenge challenge
+    User user
+    int successTests
+}
+
+
+Challenge -> User
+Challenge <- Solution
+Solution -> User
+
+@enduml
