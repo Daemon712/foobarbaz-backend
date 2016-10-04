@@ -2,7 +2,6 @@
 
 class User {
     String username
-    String email
     String password
 }
 
@@ -19,7 +18,8 @@ class Challenge {
 class Solution {
     Challenge challenge
     User user
-    int successTests
+    float completed
+    String implementation
 }
 
 

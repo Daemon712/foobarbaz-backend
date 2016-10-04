@@ -10,8 +10,8 @@ salt
         "Вернуть позицию наименьшего"|*
     }
     ..
-    {/ <b>Интерфейс решения | <u>Пример Решения | <u>Тесты }
-    <b>  public interface</b> Function <b><
+    {/ <b> Шаблон решения | <u>Пример Решения | <u>Тесты }
+    <b>  public class</b> Foo <b><
     <b>      int</b> minIndex(<b>int</b>[] array);
     <b>  >
     --
