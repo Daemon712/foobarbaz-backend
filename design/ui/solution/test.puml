@@ -1,0 +1,19 @@
+@startuml
+salt
+{
+    <b>Нахождение минимума
+    ..
+    Дан массив целых чисел.
+    Вернуть позицию наименьшего
+    --
+    {/ <u> Решение | <b> Тесты }
+    {#
+        <b>Тест            |<b>Статус|<b>Сообщение
+        testRandom         |Успех    |.
+        testSorted         |Успех    |.
+        <i>testWithZero    |<i>Провал|Ожидалось: 4, Результат: 6
+        <i>testWithNegative|<i>Ошибка|java.lang.NullPointerException
+    }
+    Выполнено: 50%
+}
+@enduml

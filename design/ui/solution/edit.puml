@@ -1,0 +1,18 @@
+@startuml
+salt
+{
+    <b>Нахождение минимума
+    ..
+    Дан массив целых чисел.
+    Вернуть позицию наименьшего
+    --
+    {/ <b> Решение | <u> Тесты }
+    <b>  public class</b> Foo <b><
+    <b>      int</b> minIndex(<b>int</b>[] array) <b><
+    <b>          return</b> array[0] < array[1] ? 0 : 1;
+    <b>      >
+    <b>  >
+    --
+    [Протестировать]
+}
+@enduml
