@@ -16,6 +16,7 @@ class Challenge {
 }
 
 class Solution {
+    long id
     Challenge challenge
     User user
     float completed
