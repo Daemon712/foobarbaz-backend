@@ -13,6 +13,7 @@ import ru.foobarbaz.logic.UserService;
 import ru.foobarbaz.repo.UserRepository;
 import ru.foobarbaz.web.dto.UserDTO;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -39,7 +40,16 @@ public class UserRestService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET,
+    @RequestMapping(value = "user", method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserDTO> getCurrentUser(HttpServletRequest httpRequest){
+        String username = httpRequest.getUserPrincipal().getName();
+        User user = userRepository.getOne(username);
+        return new ResponseEntity<>(new UserDTO(user.getUsername()), HttpStatus.OK);
+    }
+
+    //For testing user creation
+    @RequestMapping(value = "/user/list", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public List<User> getAllUsers(){
         return userRepository.findAll();
