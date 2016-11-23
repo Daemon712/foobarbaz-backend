@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class UserDTO {
+public class NewUser {
     @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
     @NotNull
     @Size(min = 2, max = 30)
@@ -14,14 +14,14 @@ public class UserDTO {
     @Size(min = 6, max = 50)
     private String password;
 
-    public UserDTO(){
+    public NewUser(){
     }
 
-    public UserDTO(String username) {
+    public NewUser(String username) {
         this.username = username;
     }
 
-    public UserDTO(String username, String password) {
+    public NewUser(String username, String password) {
         this.username = username;
         this.password = password;
     }

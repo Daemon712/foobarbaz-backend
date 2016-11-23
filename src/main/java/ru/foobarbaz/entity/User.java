@@ -2,7 +2,6 @@ package ru.foobarbaz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -16,13 +15,11 @@ public class User {
     @Id
     @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
     @Size(min = 2, max = 30)
-    @Column(name = "username", length = 30, unique = true, nullable = false)
     private String username;
 
     @JsonIgnore
     @NotNull
     @Size(min = 6, max = 60)
-    @Column(name = "password", length = 60, nullable = false)
     private String password;
 
     public User() {
