@@ -35,7 +35,14 @@ public class Challenge {
     private String unitTest;
 
     @Transient
-    private boolean status;
+    private Status status;
+
+    public Challenge() {
+    }
+
+    public Challenge(long id){
+        setId(id);
+    }
 
     public Long getId() {
         return id;
@@ -93,11 +100,15 @@ public class Challenge {
         this.unitTest = unitTest;
     }
 
-    public Boolean getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public enum Status {
+        NOT_STARTED, IN_PROGRESS, SOLVED
     }
 }

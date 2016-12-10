@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +29,7 @@ public class UserRestService {
         this.userRepository = userRepository;
     }
 
+    @PreAuthorize("isAnonymous()")
     @RequestMapping(value = "/signUp", method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUp(@Valid @RequestBody NewUser user){
@@ -39,6 +41,8 @@ public class UserRestService {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "user", method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getCurrentUser(){
@@ -47,6 +51,7 @@ public class UserRestService {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/user/list", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<User> getAllUsers(){

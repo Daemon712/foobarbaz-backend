@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.entity.User;
 import ru.foobarbaz.repo.ChallengeRepository;
+import ru.foobarbaz.repo.SolutionRepository;
 
 import java.util.Date;
 import java.util.List;
@@ -15,10 +16,13 @@ import java.util.stream.StreamSupport;
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
     private ChallengeRepository challengeRepository;
+    private SolutionRepository solutionRepository;
+    private String solutionNameTemplate;
 
     @Autowired
-    public ChallengeServiceImpl(ChallengeRepository challengeRepository) {
+    public ChallengeServiceImpl(ChallengeRepository challengeRepository, SolutionRepository solutionRepository) {
         this.challengeRepository = challengeRepository;
+        this.solutionRepository = solutionRepository;
     }
 
     @Override
@@ -38,7 +42,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Challenge getChallenge(Long id) {
         Challenge challenge = challengeRepository.findOne(id);
-        challenge.setStatus(Math.random() < 0.5);//TODO
+        challenge.setStatus(Math.random() < 0.3 ? Challenge.Status.SOLVED : Challenge.Status.NOT_STARTED);//TODO
         return challenge;
     }
 
@@ -46,7 +50,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     public List<Challenge> getChallenges() {
         return StreamSupport
                 .stream(challengeRepository.findAll().spliterator(), true)
-                .peek(challenge -> challenge.setStatus(Math.random() < 0.5))//TODO:
+                .peek(challenge -> challenge.setStatus(Math.random() < 0.3 ?
+                        Challenge.Status.SOLVED : Challenge.Status.NOT_STARTED))//TODO
                 .collect(Collectors.toList());
     }
 }

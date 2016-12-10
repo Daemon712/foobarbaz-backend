@@ -4,10 +4,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.logic.ChallengeService;
-import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.web.dto.NewChallenge;
 
 import javax.validation.Valid;
@@ -15,15 +15,14 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/challenge")
 public class ChallengeRestService {
-    private ChallengeRepository challengeRepository;
     private ChallengeService challengeService;
 
     @Autowired
-    public ChallengeRestService(ChallengeRepository challengeRepository, ChallengeService challengeService) {
-        this.challengeRepository = challengeRepository;
+    public ChallengeRestService(ChallengeService challengeService) {
         this.challengeService = challengeService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ResponseEntity<?> createChallenge(@Valid @RequestBody NewChallenge challenge){
         Challenge template = new Challenge();
@@ -33,7 +32,7 @@ public class ChallengeRestService {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Challenge getChallenge(@PathVariable("id") Long id){
+    public Challenge getChallenge(@PathVariable Long id){
         return challengeService.getChallenge(id);
     }
 
