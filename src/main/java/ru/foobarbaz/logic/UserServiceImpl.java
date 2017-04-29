@@ -31,18 +31,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public User createUser(String username, String password) {
-        User user = new User(username);
         String encryptedPassword = passwordEncoder.encode(password);
-        user.setPassword(encryptedPassword);
+        User user = new User(username, encryptedPassword);
         userRepository.save(user);
-        log.debug("Created User: {}", user);
+        log.debug("Created User: {}", username);
         return user;
     }
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findOne(username);
+        User user = userRepository.findOne(username).orElse(null);
         if (user == null){
             throw new UsernameNotFoundException(username + " not found");
         }

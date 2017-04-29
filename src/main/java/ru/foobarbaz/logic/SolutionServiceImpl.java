@@ -1,6 +1,7 @@
 package ru.foobarbaz.logic;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.Challenge;
@@ -36,7 +37,7 @@ public class SolutionServiceImpl implements SolutionService {
 
     @Override
     public List<TestResult> testSolution(long solutionId, String implementation) {
-        Solution solution = solutionRepository.findOne(solutionId);
+        Solution solution = solutionRepository.findOne(solutionId).orElseThrow(ResourceNotFoundException::new);
         solution.setCompleted((int)(Math.random() * 100));//TODO
         solution.setImplementation(implementation);
         solutionRepository.save(solution);
@@ -45,7 +46,7 @@ public class SolutionServiceImpl implements SolutionService {
 
     @Override
     public Solution updateSolution(long solutionId, String implementation) {
-        Solution solution = solutionRepository.findOne(solutionId);
+        Solution solution = solutionRepository.findOne(solutionId).orElseThrow(ResourceNotFoundException::new);
         solution.setImplementation(implementation);
         return solutionRepository.save(solution);
     }

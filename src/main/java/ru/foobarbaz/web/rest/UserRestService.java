@@ -18,7 +18,7 @@ import ru.foobarbaz.web.dto.NewUser;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping
+@RequestMapping("api/users")
 public class UserRestService {
     private final UserRepository userRepository;
     private final UserService userService;
@@ -29,31 +29,26 @@ public class UserRestService {
         this.userRepository = userRepository;
     }
 
-    @PreAuthorize("isAnonymous()")
-    @RequestMapping(value = "/signUp", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> signUp(@Valid @RequestBody NewUser user){
-        User existingUser = userRepository.findOne(user.getUsername());
+        User existingUser = userRepository.findOne(user.getUsername()).orElse(null);
         if (existingUser != null){
             return new ResponseEntity<>("username already in use", HttpStatus.BAD_REQUEST);
         }
-        userService.createUser(user.getUsername(), user.getPassword());
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        User createdUser = userService.createUser(user.getUsername(), user.getPassword());
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "user", method = RequestMethod.GET,
-        produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<User> getCurrentUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findOne(username);
+        User user = userRepository.findOne(username).orElse(null);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/user/list", method = RequestMethod.GET,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public Iterable<User> getAllUsers(){
         return userRepository.findAll();
     }

@@ -42,7 +42,7 @@ public class SolutionRestService {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "solution/{solutionId}", method = RequestMethod.GET)
     public Solution getSolution(@PathVariable long solutionId){
-        return solutionRepository.findOne(solutionId);
+        return solutionRepository.findOne(solutionId).orElse(null);
     }
 
     @PreAuthorize("isAuthenticated()")

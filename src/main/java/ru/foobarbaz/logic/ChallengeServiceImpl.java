@@ -1,6 +1,7 @@
 package ru.foobarbaz.logic;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.Challenge;
@@ -41,7 +42,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Challenge getChallenge(Long id) {
-        Challenge challenge = challengeRepository.findOne(id);
+        Challenge challenge = challengeRepository.findOne(id).orElseThrow(ResourceNotFoundException::new);
         challenge.setStatus(Math.random() < 0.3 ? Challenge.Status.SOLVED : Challenge.Status.NOT_STARTED);//TODO
         return challenge;
     }

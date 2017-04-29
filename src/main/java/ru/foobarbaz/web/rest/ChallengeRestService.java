@@ -13,7 +13,7 @@ import ru.foobarbaz.web.dto.NewChallenge;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/challenge")
+@RequestMapping("api/challenges")
 public class ChallengeRestService {
     private ChallengeService challengeService;
 
@@ -23,7 +23,7 @@ public class ChallengeRestService {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> createChallenge(@Valid @RequestBody NewChallenge challenge){
         Challenge template = new Challenge();
         BeanUtils.copyProperties(challenge, template);
@@ -36,7 +36,7 @@ public class ChallengeRestService {
         return challengeService.getChallenge(id);
     }
 
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public Iterable<Challenge> getChallenges(){
         return challengeService.getChallenges();
     }
