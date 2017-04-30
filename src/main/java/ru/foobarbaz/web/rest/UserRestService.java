@@ -1,15 +1,13 @@
 package ru.foobarbaz.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.User;
 import ru.foobarbaz.entity.UserAccount;
 import ru.foobarbaz.logic.UserService;
@@ -42,7 +40,6 @@ public class UserRestService {
         UserAccount newAccount = new UserAccount();
         newAccount.setUser(new User(user.getUsername(), user.getPassword()));
         newAccount.setDescription(user.getDescription());
-        System.out.println(user.getDescription());
         UserAccount createdUser = userService.createUser(newAccount);
         return new ResponseEntity<>(createdUser.getUser(), HttpStatus.CREATED);
     }
@@ -53,6 +50,12 @@ public class UserRestService {
     public ResponseEntity<User> getCurrentUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findOne(username).orElse(null);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UserAccount> getUser(@PathVariable String username){
+        UserAccount user = accountRepository.findOne(username).orElseThrow(ResourceNotFoundException::new);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
