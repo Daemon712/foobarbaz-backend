@@ -28,7 +28,7 @@ public class ChallengeRestService {
         Challenge template = new Challenge();
         BeanUtils.copyProperties(challenge, template);
         Challenge newChallenge = challengeService.createChallenge(template);
-        return new ResponseEntity<>(newChallenge.getId(), HttpStatus.OK);
+        return new ResponseEntity<>(newChallenge.getId(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

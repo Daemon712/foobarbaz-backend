@@ -19,7 +19,12 @@ public class Challenge {
     private String name;
 
     @NotNull
-    private String description;
+    @Size(min = 50, max = 300)
+    private String shortDescription;
+
+    @NotNull
+    @Size(min = 100, max = 2000)
+    private String fullDescription;
 
     @NotNull
     @ManyToOne
@@ -35,7 +40,7 @@ public class Challenge {
     private String unitTest;
 
     @Transient
-    private Status status;
+    private int status;
 
     public Challenge() {
     }
@@ -60,12 +65,20 @@ public class Challenge {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
+    public String getShortDescription() {
+        return shortDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
+    }
+
+    public String getFullDescription() {
+        return fullDescription;
+    }
+
+    public void setFullDescription(String fullDescription) {
+        this.fullDescription = fullDescription;
     }
 
     public User getAuthor() {
@@ -100,15 +113,11 @@ public class Challenge {
         this.unitTest = unitTest;
     }
 
-    public Status getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(int status) {
         this.status = status;
-    }
-
-    public enum Status {
-        NOT_STARTED, IN_PROGRESS, SOLVED
     }
 }
