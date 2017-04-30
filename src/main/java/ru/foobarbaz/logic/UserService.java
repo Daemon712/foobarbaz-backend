@@ -1,7 +1,7 @@
 package ru.foobarbaz.logic;
 
-import ru.foobarbaz.entity.User;
+import ru.foobarbaz.entity.UserAccount;
 
 public interface UserService {
-    User createUser(String username, String password);
+    UserAccount createUser(UserAccount userAccount);
 }

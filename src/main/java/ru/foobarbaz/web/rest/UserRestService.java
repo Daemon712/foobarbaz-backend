@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import ru.foobarbaz.entity.User;
+import ru.foobarbaz.entity.UserAccount;
 import ru.foobarbaz.logic.UserService;
+import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserRepository;
 import ru.foobarbaz.web.dto.NewUser;
 
@@ -21,12 +23,14 @@ import javax.validation.Valid;
 @RequestMapping("api/users")
 public class UserRestService {
     private final UserRepository userRepository;
+    private final UserAccountRepository accountRepository;
     private final UserService userService;
 
     @Autowired
-    public UserRestService(UserService userService, UserRepository userRepository) {
+    public UserRestService(UserService userService, UserRepository userRepository, UserAccountRepository accountRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -35,8 +39,12 @@ public class UserRestService {
         if (existingUser != null){
             return new ResponseEntity<>("username already in use", HttpStatus.BAD_REQUEST);
         }
-        User createdUser = userService.createUser(user.getUsername(), user.getPassword());
-        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        UserAccount newAccount = new UserAccount();
+        newAccount.setUser(new User(user.getUsername(), user.getPassword()));
+        newAccount.setDescription(user.getDescription());
+        System.out.println(user.getDescription());
+        UserAccount createdUser = userService.createUser(newAccount);
+        return new ResponseEntity<>(createdUser.getUser(), HttpStatus.CREATED);
     }
 
 
@@ -49,7 +57,7 @@ public class UserRestService {
     }
 
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Iterable<User> getAllUsers(){
-        return userRepository.findAll();
+    public Iterable<UserAccount> getAllUsers(){
+        return accountRepository.findAll();
     }
 }
