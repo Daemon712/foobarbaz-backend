@@ -1,17 +1,26 @@
 package ru.foobarbaz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "challenges")
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Challenge {
+    public static final int MAX_RATING = 5;
+    public static final int MIN_RATING = 1;
+    public static final int MAX_DIFFICULTY = 5;
+    public static final int MIN_DIFFICULTY = 1;
+
     @Id
     @GeneratedValue
     private Long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private ChallengeDetails details;
 
     @NotNull
     @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
@@ -23,21 +32,19 @@ public class Challenge {
     private String shortDescription;
 
     @NotNull
-    @Size(min = 100, max = 2000)
-    private String fullDescription;
-
-    @NotNull
     @ManyToOne
     private User author;
 
     @NotNull
     private Date created;
 
-    @NotNull
-    private String template;
+    @Min(MIN_RATING)
+    @Max(MAX_RATING)
+    private int rating;
 
-    @NotNull
-    private String unitTest;
+    @Min(MIN_DIFFICULTY)
+    @Max(MAX_DIFFICULTY)
+    private int difficulty;
 
     @Transient
     private int status;
@@ -57,6 +64,14 @@ public class Challenge {
         this.id = id;
     }
 
+    public ChallengeDetails getDetails() {
+        return details;
+    }
+
+    public void setDetails(ChallengeDetails details) {
+        this.details = details;
+    }
+
     public String getName() {
         return name;
     }
@@ -71,14 +86,6 @@ public class Challenge {
 
     public void setShortDescription(String shortDescription) {
         this.shortDescription = shortDescription;
-    }
-
-    public String getFullDescription() {
-        return fullDescription;
-    }
-
-    public void setFullDescription(String fullDescription) {
-        this.fullDescription = fullDescription;
     }
 
     public User getAuthor() {
@@ -97,20 +104,20 @@ public class Challenge {
         this.created = created;
     }
 
-    public String getTemplate() {
-        return template;
+    public int getRating() {
+        return rating;
     }
 
-    public void setTemplate(String template) {
-        this.template = template;
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
-    public String getUnitTest() {
-        return unitTest;
+    public int getDifficulty() {
+        return difficulty;
     }
 
-    public void setUnitTest(String unitTest) {
-        this.unitTest = unitTest;
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
     }
 
     public int getStatus() {

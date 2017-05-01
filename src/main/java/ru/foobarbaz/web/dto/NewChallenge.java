@@ -1,8 +1,8 @@
 package ru.foobarbaz.web.dto;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import ru.foobarbaz.entity.Challenge;
+
+import javax.validation.constraints.*;
 
 public class NewChallenge {
     @NotNull
@@ -18,11 +18,18 @@ public class NewChallenge {
     @Size(min = 100, max = 2000)
     private String fullDescription;
 
+    @Min(Challenge.MIN_DIFFICULTY)
+    @Max(Challenge.MAX_DIFFICULTY)
+    private int difficulty;
+
     @NotNull
     private String template;
 
     @NotNull
     private String unitTest;
+
+    @NotNull
+    private String sample;
 
     public String getName() {
         return name;
@@ -48,6 +55,14 @@ public class NewChallenge {
         this.fullDescription = fullDescription;
     }
 
+    public int getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        this.difficulty = difficulty;
+    }
+
     public String getTemplate() {
         return template;
     }
@@ -64,4 +79,11 @@ public class NewChallenge {
         this.unitTest = unitTest;
     }
 
+    public String getSample() {
+        return sample;
+    }
+
+    public void setSample(String sample) {
+        this.sample = sample;
+    }
 }

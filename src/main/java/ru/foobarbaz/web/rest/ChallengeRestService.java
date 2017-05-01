@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.Challenge;
+import ru.foobarbaz.entity.ChallengeDetails;
 import ru.foobarbaz.logic.ChallengeService;
 import ru.foobarbaz.web.dto.NewChallenge;
 
@@ -24,16 +25,21 @@ public class ChallengeRestService {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> createChallenge(@Valid @RequestBody NewChallenge challenge){
-        Challenge template = new Challenge();
-        BeanUtils.copyProperties(challenge, template);
-        Challenge newChallenge = challengeService.createChallenge(template);
+    public ResponseEntity<?> createChallenge(@Valid @RequestBody NewChallenge input){
+        Challenge challenge = new Challenge();
+        BeanUtils.copyProperties(input, challenge);
+
+        ChallengeDetails details = new ChallengeDetails();
+        BeanUtils.copyProperties(input, details);
+        challenge.setDetails(details);
+
+        Challenge newChallenge = challengeService.createChallenge(challenge);
         return new ResponseEntity<>(newChallenge.getId(), HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Challenge getChallenge(@PathVariable Long id){
-        return challengeService.getChallenge(id);
+        return challengeService.getChallengeDetails(id).getChallenge();
     }
 
     @RequestMapping(method = RequestMethod.GET)
