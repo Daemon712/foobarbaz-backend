@@ -2,8 +2,7 @@ package ru.foobarbaz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -13,6 +12,24 @@ public class UserChallengeDetails {
     @EmbeddedId
     @JsonIgnore
     private UserChallengePK pk;
+
+    @ManyToOne
+    @JoinColumn(name = "username", insertable = false, updatable = false)
+    @JsonIgnore
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "challengeId", insertable = false, updatable = false)
+    @JsonIgnore
+    private ChallengeDetails challengeDetails;
+
+    @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "username", insertable = false, updatable = false),
+            @JoinColumn(name = "challengeId", insertable = false, updatable = false)
+    })
+    @JsonIgnore
+    private ChallengeStatus status;
 
     @Min(Challenge.MIN_RATING)
     @Max(Challenge.MAX_RATING)
@@ -32,19 +49,43 @@ public class UserChallengeDetails {
         this.pk = pk;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public ChallengeDetails getChallengeDetails() {
+        return challengeDetails;
+    }
+
+    public void setChallengeDetails(ChallengeDetails challengeDetails) {
+        this.challengeDetails = challengeDetails;
+    }
+
+    public ChallengeStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ChallengeStatus status) {
+        this.status = status;
+    }
+
     public int getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
-    public int getDifficulty() {
+    public Integer getDifficulty() {
         return difficulty;
     }
 
-    public void setDifficulty(int difficulty) {
+    public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
     }
 

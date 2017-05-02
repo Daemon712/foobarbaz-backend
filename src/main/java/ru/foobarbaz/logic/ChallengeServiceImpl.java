@@ -81,16 +81,18 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public ChallengeDetails getChallengeDetails(Long challengeId) {
-        ChallengeDetails details = detailsRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
+        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserChallengeDetails userDetails = userDetailsRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null);
+
+        ChallengeDetails details = userDetails != null ?
+                userDetails.getChallengeDetails() :
+                detailsRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
+
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);
 
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
+        details.getChallenge().setStatus(userDetails != null ? userDetails.getStatus().getStatus() : ChallengeStatus.NOT_STARTED);
 
-        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null) : null;
-        details.getChallenge().setStatus(status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED);
-
-        UserChallengeDetails userDetails = userDetailsRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null);
         details.setUserDetails(userDetails);
 
         return details;

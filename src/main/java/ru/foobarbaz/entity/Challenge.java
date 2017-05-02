@@ -1,6 +1,7 @@
 package ru.foobarbaz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,6 +18,7 @@ public class Challenge {
 
     @Id
     @GeneratedValue
+    @JsonProperty("id")
     private Long challengeId;
 
     @OneToOne(fetch = FetchType.LAZY)

@@ -1,7 +1,6 @@
 package ru.foobarbaz.entity;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 @Entity
 public class ChallengeStatus {
@@ -12,6 +11,14 @@ public class ChallengeStatus {
     @EmbeddedId
     private UserChallengePK pk;
 
+    @ManyToOne
+    @JoinColumn(name = "username", insertable = false, updatable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "challengeId", insertable = false, updatable = false)
+    private Challenge challenge;
+
     private int status;
 
     public UserChallengePK getPk() {
@@ -20,6 +27,22 @@ public class ChallengeStatus {
 
     public void setPk(UserChallengePK pk) {
         this.pk = pk;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Challenge getChallenge() {
+        return challenge;
+    }
+
+    public void setChallenge(Challenge challenge) {
+        this.challenge = challenge;
     }
 
     public int getStatus() {
