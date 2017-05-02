@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
 public class ChallengeDetails {
     @Id
     @JsonIgnore
-    private Long id;
+    private Long challengeId;
 
     @MapsId
     @OneToOne(fetch = FetchType.EAGER)
@@ -35,12 +35,12 @@ public class ChallengeDetails {
     @Transient
     private UserChallengeDetails userDetails;
 
-    public Long getId() {
-        return id;
+    public Long getChallengeId() {
+        return challengeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setChallengeId(Long challengeId) {
+        this.challengeId = challengeId;
     }
 
     public Challenge getChallenge() {

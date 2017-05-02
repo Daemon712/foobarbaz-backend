@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ChallengeService {
     Challenge createChallenge(Challenge challenge);
-    Challenge getChallenge(Long id);
-    ChallengeDetails getChallengeDetails(Long id);
+    Challenge getChallenge(Long challengeId);
+    ChallengeDetails getChallengeDetails(Long challengeId);
     List<Challenge> getChallenges();
 }

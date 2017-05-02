@@ -17,7 +17,7 @@ public class Challenge {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Long challengeId;
 
     @OneToOne(fetch = FetchType.LAZY)
     private ChallengeDetails details;
@@ -52,16 +52,16 @@ public class Challenge {
     public Challenge() {
     }
 
-    public Challenge(long id){
-        setId(id);
+    public Challenge(Long challengeId){
+        this.challengeId = challengeId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getChallengeId() {
+        return challengeId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setChallengeId(Long challengeId) {
+        this.challengeId = challengeId;
     }
 
     public ChallengeDetails getDetails() {

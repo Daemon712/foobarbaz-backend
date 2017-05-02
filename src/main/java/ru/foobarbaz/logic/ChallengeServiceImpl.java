@@ -57,13 +57,13 @@ public class ChallengeServiceImpl implements ChallengeService {
         savedChallenge.setDetails(savedDetails);
 
         UserChallengeDetails userDetails = new UserChallengeDetails();
-        userDetails.setPk(new UserChallengePK(author, savedChallenge.getId()));
+        userDetails.setPk(new UserChallengePK(author, savedChallenge.getChallengeId()));
         userDetails.setRating(savedChallenge.getRating());
         userDetails.setDifficulty(savedChallenge.getDifficulty());
         userDetailsRepository.save(userDetails);
 
         ChallengeStatus challengeStatus = new ChallengeStatus();
-        challengeStatus.setPk(new UserChallengePK(author, savedChallenge.getId()));
+        challengeStatus.setPk(new UserChallengePK(author, savedChallenge.getChallengeId()));
         challengeStatus.setStatus(ChallengeStatus.SOLVED);
         statusRepository.save(challengeStatus);
 
@@ -71,26 +71,26 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Challenge getChallenge(Long id) {
-        Challenge challenge = challengeRepository.findOne(id).orElseThrow(ResourceNotFoundException::new);
+    public Challenge getChallenge(Long challengeId) {
+        Challenge challenge = challengeRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, id)).orElse(null) : null;
+        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null) : null;
         challenge.setStatus(status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED);
         return challenge;
     }
 
     @Override
-    public ChallengeDetails getChallengeDetails(Long id) {
-        ChallengeDetails details = detailsRepository.findOne(id).orElseThrow(ResourceNotFoundException::new);
+    public ChallengeDetails getChallengeDetails(Long challengeId) {
+        ChallengeDetails details = detailsRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);
 
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, id)).orElse(null) : null;
+        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null) : null;
         details.getChallenge().setStatus(status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED);
 
-        UserChallengeDetails userDetails = userDetailsRepository.findOne(new UserChallengePK(user, id)).orElse(null);
+        UserChallengeDetails userDetails = userDetailsRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null);
         details.setUserDetails(userDetails);
 
         return details;
@@ -111,7 +111,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         Iterable<Challenge> challenges = challengeRepository.findAll();
         return StreamSupport.stream(challenges.spliterator(), false)
                 .peek(c -> c.setDetails(null))
-                .peek(c -> c.setStatus(statusMap.getOrDefault(c.getId(), ChallengeStatus.NOT_STARTED)))
+                .peek(c -> c.setStatus(statusMap.getOrDefault(c.getChallengeId(), ChallengeStatus.NOT_STARTED)))
                 .collect(Collectors.toList());
     }
 }

@@ -34,12 +34,12 @@ public class ChallengeRestService {
         challenge.setDetails(details);
 
         Challenge newChallenge = challengeService.createChallenge(challenge);
-        return new ResponseEntity<>(newChallenge.getId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(newChallenge.getChallengeId(), HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Challenge getChallenge(@PathVariable Long id){
-        return challengeService.getChallengeDetails(id).getChallenge();
+    @RequestMapping(value = "/{challengeId}", method = RequestMethod.GET)
+    public Challenge getChallenge(@PathVariable Long challengeId){
+        return challengeService.getChallengeDetails(challengeId).getChallenge();
     }
 
     @RequestMapping(method = RequestMethod.GET)
