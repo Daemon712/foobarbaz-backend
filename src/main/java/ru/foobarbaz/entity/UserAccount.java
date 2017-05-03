@@ -29,6 +29,9 @@ public class UserAccount {
     @Min(0)
     private int solutions;
 
+    @Min(0)
+    private int challenges;
+
     public UserAccount() {
     }
 
@@ -70,5 +73,13 @@ public class UserAccount {
 
     public void setSolutions(int solutions) {
         this.solutions = solutions;
+    }
+
+    public int getChallenges() {
+        return challenges;
+    }
+
+    public void setChallenges(int challenges) {
+        this.challenges = challenges;
     }
 }

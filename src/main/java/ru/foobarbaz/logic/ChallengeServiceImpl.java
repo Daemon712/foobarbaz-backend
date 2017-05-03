@@ -6,8 +6,10 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.*;
+import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.repo.*;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private ChallengeRepository challengeRepository;
     private ChallengeStatusRepository statusRepository;
     private ChallengeDetailsRepository detailsRepository;
+    private UserAccountRepository userAccountRepository;
     private UserChallengeDetailsRepository userDetailsRepository;
 
     @Autowired
@@ -29,49 +32,80 @@ public class ChallengeServiceImpl implements ChallengeService {
             ChallengeRepository challengeRepository,
             ChallengeStatusRepository statusRepository,
             ChallengeDetailsRepository detailsRepository,
+            UserAccountRepository userAccountRepository,
             UserChallengeDetailsRepository userDetailsRepository) {
         this.testService = testService;
         this.challengeRepository = challengeRepository;
         this.statusRepository = statusRepository;
         this.detailsRepository = detailsRepository;
+        this.userAccountRepository = userAccountRepository;
         this.userDetailsRepository = userDetailsRepository;
     }
 
     @Override
+    @Transactional
     public Challenge createChallenge(Challenge template) {
-
-        String author = SecurityContextHolder.getContext().getAuthentication().getName();
-
         Challenge challenge = new Challenge();
         BeanUtils.copyProperties(template, challenge);
+        ChallengeDetails details = new ChallengeDetails();
+        BeanUtils.copyProperties(template.getDetails(), details);
+        List<TestResult> results = test(details);
+        return save(challenge, details, results);
+    }
+
+    private List<TestResult> test(ChallengeDetails details) {
+        List<TestResult> results = testService.executeTests(details.getUnitTest(), details.getSample());
+        boolean passed = results.size() > 0 && results.stream()
+                .mapToInt(TestResult::getStatus)
+                .allMatch(s -> s == SolutionStatus.SUCCESS);
+
+        if (!passed) throw new TestNotPassedException(results);
+        return results;
+    }
+
+    private Challenge save(Challenge challenge, ChallengeDetails details, List<TestResult> results) {
+        String author = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        challenge.setAuthor(new User(author));
         challenge.setRating(Challenge.MAX_RATING);
         challenge.setCreated(new Date());
-        challenge.setAuthor(new User(author));
         challenge.setDetails(null);
         Challenge savedChallenge = challengeRepository.save(challenge);
 
-        ChallengeDetails details = new ChallengeDetails();
-        BeanUtils.copyProperties(template.getDetails(), details);
-        details.setSolutions(1);//At least the author has solved it
         details.setChallenge(savedChallenge);
         ChallengeDetails savedDetails = detailsRepository.save(details);
-        savedChallenge.setDetails(savedDetails);
+        challenge.setDetails(savedDetails);
 
-        UserChallengeDetails userDetails = new UserChallengeDetails();
-        userDetails.setPk(new UserChallengePK(author, savedChallenge.getChallengeId()));
-        userDetails.setRating(savedChallenge.getRating());
-        userDetails.setDifficulty(savedChallenge.getDifficulty());
-        userDetailsRepository.save(userDetails);
-
-        ChallengeStatus challengeStatus = new ChallengeStatus();
-        challengeStatus.setPk(new UserChallengePK(author, savedChallenge.getChallengeId()));
-        challengeStatus.setStatus(ChallengeStatus.SOLVED);
-        statusRepository.save(challengeStatus);
-
+        saveSolution(savedChallenge, results);
         return savedChallenge;
     }
 
+    private void saveSolution(Challenge challenge, List<TestResult> results) {
+        String author = challenge.getAuthor().getUsername();
+        Long id = challenge.getChallengeId();
+        UserChallengePK userChallengePK = new UserChallengePK(author, id);
 
+        ChallengeStatus challengeStatus = new ChallengeStatus(userChallengePK);
+        challengeStatus.setStatus(ChallengeStatus.SOLVED);
+        statusRepository.save(challengeStatus);
+
+        Solution solution = new Solution(new SolutionPK(author, id, 1));
+        solution.setImplementation(challenge.getDetails().getSample());
+        solution.setStatus(SolutionStatus.SUCCESS);
+        solution.setTestResults(results);
+
+        UserChallengeDetails userDetails = new UserChallengeDetails(userChallengePK);
+        userDetails.setSolutions(Collections.singletonList(solution));
+        userDetails.setRating(challenge.getRating());
+        userDetails.setDifficulty(challenge.getDifficulty());
+
+        UserAccount userAccount = userAccountRepository.findOne(author)
+                .orElseThrow(ResourceNotFoundException::new);
+        userAccount.setChallenges(userAccount.getChallenges() + 1);
+        userDetails.setUserAccount(userAccount);
+
+        userDetailsRepository.save(userDetails);
+    }
 
     @Override
     public Challenge getChallenge(Long challengeId) {

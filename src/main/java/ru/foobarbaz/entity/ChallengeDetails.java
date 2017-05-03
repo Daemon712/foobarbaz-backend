@@ -13,7 +13,8 @@ public class ChallengeDetails {
     private Long challengeId;
 
     @MapsId
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne
+    @JoinColumn(name="challengeId")
     @JsonIgnore
     private Challenge challenge;
 
@@ -27,6 +28,10 @@ public class ChallengeDetails {
     @NotNull
     @JsonIgnore
     private String unitTest;
+
+    @Transient
+    @JsonIgnore
+    private String sample;
 
     private int views;
 
@@ -73,6 +78,14 @@ public class ChallengeDetails {
 
     public void setUnitTest(String unitTest) {
         this.unitTest = unitTest;
+    }
+
+    public String getSample() {
+        return sample;
+    }
+
+    public void setSample(String sample) {
+        this.sample = sample;
     }
 
     public int getViews() {

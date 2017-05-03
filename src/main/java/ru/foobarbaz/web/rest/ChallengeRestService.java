@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.entity.ChallengeDetails;
 import ru.foobarbaz.entity.TestResult;
+import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
 import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.web.dto.NewChallenge;
@@ -41,6 +42,11 @@ public class ChallengeRestService {
 
         Challenge newChallenge = challengeService.createChallenge(challenge);
         return new ResponseEntity<>(newChallenge.getChallengeId(), HttpStatus.CREATED);
+    }
+
+    @ExceptionHandler(TestNotPassedException.class)
+    public ResponseEntity<List<TestResult>> testNotPassed(TestNotPassedException e) {
+        return new ResponseEntity<>(e.getTestResultList(), HttpStatus.ACCEPTED);
     }
 
     @PreAuthorize("isAuthenticated()")
