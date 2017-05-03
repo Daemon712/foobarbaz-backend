@@ -2,12 +2,15 @@ package ru.foobarbaz.logic;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.*;
+import ru.foobarbaz.repo.ChallengeDetailsRepository;
 import ru.foobarbaz.repo.SolutionRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,6 +18,7 @@ import java.util.List;
 public class SolutionServiceImpl implements SolutionService {
     private SolutionRepository solutionRepository;
     private UserChallengeDetailsRepository userChallengeDetailsRepository;
+    private ChallengeDetailsRepository challengeDetailsRepository;
     private TestService testService;
     private final static int MAX_SOLUTIONS = 10;
 
@@ -22,9 +26,11 @@ public class SolutionServiceImpl implements SolutionService {
     public SolutionServiceImpl(
             SolutionRepository solutionRepository,
             UserChallengeDetailsRepository userChallengeDetailsRepository,
+            ChallengeDetailsRepository challengeDetailsRepository,
             TestService testService) {
         this.solutionRepository = solutionRepository;
         this.userChallengeDetailsRepository = userChallengeDetailsRepository;
+        this.challengeDetailsRepository = challengeDetailsRepository;
         this.testService = testService;
     }
 
@@ -40,6 +46,11 @@ public class SolutionServiceImpl implements SolutionService {
     public Solution testSolution(Solution template) {
         Solution solution = prepareAndValidate(template);
 
+        if (solution.getHolder().getChallengeDetails() == null){
+            ChallengeDetails challengeDetails = challengeDetailsRepository.findOne(solution.getPk().getChallengeId())
+                    .orElseThrow(ResourceNotFoundException::new);
+            solution.getHolder().setChallengeDetails(challengeDetails);
+        }
         String unitTest = solution.getHolder().getChallengeDetails().getUnitTest();
         String impl = solution.getImplementation();
         List<TestResult> results = testService.executeTests(unitTest, impl);
@@ -90,6 +101,7 @@ public class SolutionServiceImpl implements SolutionService {
         }
         holder.setStatus(challengeStatus);
 
+        if (holder.getSolutions() == null) holder.setSolutions(new ArrayList<>());
         if (!exists(holder.getSolutions(), solution.getPk().getSolutionNum())){
             if (holder.getSolutions().size() >= MAX_SOLUTIONS){
                 throw new IllegalStateException(MessageFormat.format("Only {0} solution for one user and one challenge are allowed", MAX_SOLUTIONS));

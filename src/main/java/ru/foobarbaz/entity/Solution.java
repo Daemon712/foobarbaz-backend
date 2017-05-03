@@ -19,7 +19,7 @@ public class Solution {
             @JoinColumn(name="username", referencedColumnName="username", insertable = false, updatable = false),
             @JoinColumn(name="challengeId", referencedColumnName="challengeId", insertable = false, updatable = false)
     })
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     private UserChallengeDetails holder;
 
@@ -83,5 +83,10 @@ public class Solution {
 
     public void setTestResults(List<TestResult> testResults) {
         this.testResults = testResults;
+    }
+
+    @PreRemove
+    private void remove() {
+        getHolder().getSolutions().remove(this);
     }
 }
