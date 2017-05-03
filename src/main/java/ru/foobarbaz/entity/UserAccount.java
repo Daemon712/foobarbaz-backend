@@ -1,6 +1,7 @@
 package ru.foobarbaz.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -24,6 +25,9 @@ public class UserAccount {
 
     @Size(max = 200)
     private String description;
+
+    @Min(0)
+    private int solutions;
 
     public UserAccount() {
     }
@@ -58,5 +62,13 @@ public class UserAccount {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getSolutions() {
+        return solutions;
+    }
+
+    public void setSolutions(int solutions) {
+        this.solutions = solutions;
     }
 }

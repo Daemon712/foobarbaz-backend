@@ -3,52 +3,72 @@ package ru.foobarbaz.web.rest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.entity.Solution;
-import ru.foobarbaz.entity.TestResult;
-import ru.foobarbaz.entity.User;
+import ru.foobarbaz.entity.SolutionPK;
 import ru.foobarbaz.logic.SolutionService;
 import ru.foobarbaz.repo.SolutionRepository;
 
 import java.util.List;
 
 @RestController
-@RequestMapping
+@PreAuthorize("isAuthenticated()")
+@RequestMapping(value = "api/challenges/{challengeId}/solutions")
 public class SolutionRestService {
     private SolutionRepository solutionRepository;
     private SolutionService solutionService;
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "challenge/{challengeId}/test_solution", method = RequestMethod.POST)
-    public List<TestResult> testSolution(@PathVariable long challengeId, @RequestBody String impl){
-        return solutionService.testSolution(challengeId, impl);
+    public SolutionRestService(
+            SolutionRepository solutionRepository,
+            SolutionService solutionService) {
+        this.solutionRepository = solutionRepository;
+        this.solutionService = solutionService;
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "challenge/{challengeId}/save_solution", method = RequestMethod.POST)
-    public Solution createSolution(@PathVariable long challengeId, @RequestBody String impl){
-        return solutionService.createSolution(challengeId, impl);
-    }
-
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "challenge/{challengeId}/solutions", method = RequestMethod.GET)
+    @RequestMapping
     public List<Solution> getSolutions(@PathVariable long challengeId){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = new User(username);
-        Challenge challenge = new Challenge(challengeId);
-        return solutionRepository.findByChallengeAndUser(challenge, user);
+        return solutionRepository.findByPkChallengeIdAndPkUsername(challengeId, username);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "solution/{solutionId}", method = RequestMethod.GET)
-    public Solution getSolution(@PathVariable long solutionId){
-        return solutionRepository.findOne(solutionId).orElse(null);
+    @RequestMapping(value = "/new/test", method = RequestMethod.POST)
+    public Solution testSolution(@PathVariable long challengeId, @RequestBody String impl){
+        Solution solution = buildEntity(challengeId, null, impl);
+        return solutionService.testSolution(solution);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "solution/{solutionId}", method = RequestMethod.PUT)
-    public Solution updateSolution(@PathVariable long solutionId, @RequestBody String impl){
-        return solutionService.updateSolution(solutionId, impl);
+    @RequestMapping(value = "/{solutionNum}/test", method = RequestMethod.POST)
+    public Solution testSolution(@PathVariable long challengeId,
+                                 @PathVariable int solutionNum,
+                                 @RequestBody String impl){
+
+        Solution solution = buildEntity(challengeId, solutionNum, impl);
+        return solutionService.testSolution(solution);
     }
 
+    @RequestMapping(value = "/new/save", method = RequestMethod.POST)
+    public Solution saveSolution(@PathVariable long challengeId, @RequestBody String impl){
+        Solution solution = buildEntity(challengeId, null, impl);
+        return solutionService.saveSolution(solution);
+    }
+
+    @RequestMapping(value = "/{solutionNum}/save", method = RequestMethod.POST)
+    public Solution saveSolution(@PathVariable long challengeId,
+                                 @PathVariable int solutionNum,
+                                 @RequestBody String impl){
+        Solution solution = buildEntity(challengeId, solutionNum, impl);
+        return solutionService.saveSolution(solution);
+    }
+
+    @RequestMapping(value = "/{solutionNum}", method = RequestMethod.DELETE)
+    public void deleteSolution(@PathVariable long challengeId, @PathVariable int solutionNum){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        solutionRepository.delete(new SolutionPK(username, challengeId, solutionNum));
+    }
+
+    private Solution buildEntity(Long challengeId, Integer solutionNum, String impl){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Solution solution = new Solution(username, challengeId, solutionNum);
+        solution.setImplementation(impl);
+        return solution;
+    }
 }

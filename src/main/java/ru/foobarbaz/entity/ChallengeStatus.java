@@ -1,6 +1,8 @@
 package ru.foobarbaz.entity;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Entity
 public class ChallengeStatus {
@@ -19,7 +21,16 @@ public class ChallengeStatus {
     @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     private Challenge challenge;
 
+    @Min(NOT_STARTED)
+    @Max(SOLVED)
     private int status;
+
+    public ChallengeStatus() {
+    }
+
+    public ChallengeStatus(UserChallengePK pk) {
+        this.pk = pk;
+    }
 
     public UserChallengePK getPk() {
         return pk;

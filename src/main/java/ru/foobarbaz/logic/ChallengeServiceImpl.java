@@ -6,10 +6,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.*;
-import ru.foobarbaz.repo.ChallengeDetailsRepository;
-import ru.foobarbaz.repo.ChallengeRepository;
-import ru.foobarbaz.repo.ChallengeStatusRepository;
-import ru.foobarbaz.repo.UserChallengeDetailsRepository;
+import ru.foobarbaz.repo.*;
 
 import java.util.Collections;
 import java.util.Date;

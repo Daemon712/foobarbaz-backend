@@ -1,66 +1,64 @@
 package ru.foobarbaz.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 @Table(name = "solutions")
 public class Solution {
-    @Id
-    @GeneratedValue
-    private Long id;
+    @EmbeddedId
+    private SolutionPK pk;
 
-    @NotNull
-    private String name;
+    @JoinColumns({
+            @JoinColumn(name="username", referencedColumnName="username", insertable = false, updatable = false),
+            @JoinColumn(name="challengeId", referencedColumnName="challengeId", insertable = false, updatable = false)
+    })
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JsonIgnore
+    private UserChallengeDetails holder;
 
-    @NotNull
-    @ManyToOne
-    private User user;
+    @Min(SolutionStatus.EMPTY)
+    @Max(SolutionStatus.ERROR)
+    private int status;
 
-    @NotNull
-    @ManyToOne
-    private Challenge challenge;
+    @ElementCollection
+    @CollectionTable
+    private List<TestResult> testResults;
 
     @NotNull
     private String implementation;
 
-    @Min(0)
-    @Max(100)
-    private Integer completed;
-
-    public Long getId() {
-        return id;
+    public Solution() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Solution(SolutionPK pk) {
+        this.pk = pk;
     }
 
-    public String getName() {
-        return name;
+    public Solution(String username, Long challengeId, Integer solutionNum) {
+        this.pk = new SolutionPK(username, challengeId, solutionNum);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public SolutionPK getPk() {
+        return pk;
     }
 
-    public User getUser() {
-        return user;
+    public void setPk(SolutionPK pk) {
+        this.pk = pk;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public UserChallengeDetails getHolder() {
+        return holder;
     }
 
-    public Challenge getChallenge() {
-        return challenge;
-    }
-
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
+    public void setHolder(UserChallengeDetails holder) {
+        this.holder = holder;
     }
 
     public String getImplementation() {
@@ -71,11 +69,19 @@ public class Solution {
         this.implementation = implementation;
     }
 
-    public int getCompleted() {
-        return completed;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCompleted(int completed) {
-        this.completed = completed;
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public List<TestResult> getTestResults() {
+        return testResults;
+    }
+
+    public void setTestResults(List<TestResult> testResults) {
+        this.testResults = testResults;
     }
 }

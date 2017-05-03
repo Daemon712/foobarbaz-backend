@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
 
 @Entity
 public class UserChallengeDetails {
@@ -13,17 +14,17 @@ public class UserChallengeDetails {
     @JsonIgnore
     private UserChallengePK pk;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "username", insertable = false, updatable = false)
     @JsonIgnore
-    private User user;
+    private UserAccount userAccount;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     @JsonIgnore
     private ChallengeDetails challengeDetails;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumns({
             @JoinColumn(name = "username", insertable = false, updatable = false),
             @JoinColumn(name = "challengeId", insertable = false, updatable = false)
@@ -41,6 +42,16 @@ public class UserChallengeDetails {
 
     private boolean bookmark;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "holder")
+    private List<Solution> solutions;
+
+    public UserChallengeDetails() {
+    }
+
+    public UserChallengeDetails(UserChallengePK pk) {
+        this.pk = pk;
+    }
+
     public UserChallengePK getPk() {
         return pk;
     }
@@ -49,12 +60,12 @@ public class UserChallengeDetails {
         this.pk = pk;
     }
 
-    public User getUser() {
-        return user;
+    public UserAccount getUserAccount() {
+        return userAccount;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
     }
 
     public ChallengeDetails getChallengeDetails() {
@@ -97,4 +108,11 @@ public class UserChallengeDetails {
         this.bookmark = bookmark;
     }
 
+    public List<Solution> getSolutions() {
+        return solutions;
+    }
+
+    public void setSolutions(List<Solution> solutions) {
+        this.solutions = solutions;
+    }
 }
