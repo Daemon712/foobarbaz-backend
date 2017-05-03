@@ -8,19 +8,25 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.entity.ChallengeDetails;
+import ru.foobarbaz.entity.TestResult;
 import ru.foobarbaz.logic.ChallengeService;
+import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.web.dto.NewChallenge;
+import ru.foobarbaz.web.dto.TestChallenge;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/challenges")
 public class ChallengeRestService {
     private ChallengeService challengeService;
+    private TestService testService;
 
     @Autowired
-    public ChallengeRestService(ChallengeService challengeService) {
+    public ChallengeRestService(ChallengeService challengeService, TestService testService) {
         this.challengeService = challengeService;
+        this.testService = testService;
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -35,6 +41,12 @@ public class ChallengeRestService {
 
         Challenge newChallenge = challengeService.createChallenge(challenge);
         return new ResponseEntity<>(newChallenge.getChallengeId(), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
+    public List<TestResult> testNewChallenge(@Valid @RequestBody TestChallenge input){
+        return testService.executeTests(input.getUnitTest(), input.getSample());
     }
 
     @RequestMapping(value = "/{challengeId}", method = RequestMethod.GET)

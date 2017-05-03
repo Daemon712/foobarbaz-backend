@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
+    private TestService testService;
     private ChallengeRepository challengeRepository;
     private ChallengeStatusRepository statusRepository;
     private ChallengeDetailsRepository detailsRepository;
@@ -24,10 +25,12 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Autowired
     public ChallengeServiceImpl(
+            TestService testService,
             ChallengeRepository challengeRepository,
             ChallengeStatusRepository statusRepository,
             ChallengeDetailsRepository detailsRepository,
             UserChallengeDetailsRepository userDetailsRepository) {
+        this.testService = testService;
         this.challengeRepository = challengeRepository;
         this.statusRepository = statusRepository;
         this.detailsRepository = detailsRepository;
@@ -36,6 +39,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Challenge createChallenge(Challenge template) {
+
         String author = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Challenge challenge = new Challenge();
@@ -66,6 +70,8 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         return savedChallenge;
     }
+
+
 
     @Override
     public Challenge getChallenge(Long challengeId) {
