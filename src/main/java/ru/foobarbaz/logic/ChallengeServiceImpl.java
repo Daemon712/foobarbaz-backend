@@ -131,7 +131,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         details.getChallenge().setStatus(userDetails != null ? userDetails.getStatus().getStatus() : ChallengeStatus.NOT_STARTED);
 
         details.setUserDetails(userDetails);
-
+        details.getChallenge().setDetails(details);
         return details;
     }
 
