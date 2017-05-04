@@ -1,6 +1,6 @@
 package ru.foobarbaz.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -8,12 +8,11 @@ import java.util.Objects;
 
 @Embeddable
 public class SolutionPK implements Serializable {
-    @JsonIgnore
     private String username;
 
-    @JsonIgnore
     private Long challengeId;
 
+    @JsonValue
     private Integer solutionNum;
 
     public SolutionPK() {

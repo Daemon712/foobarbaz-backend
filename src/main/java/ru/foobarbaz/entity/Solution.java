@@ -2,6 +2,7 @@ package ru.foobarbaz.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
@@ -13,6 +14,7 @@ import java.util.List;
 @Table(name = "solutions")
 public class Solution {
     @EmbeddedId
+    @JsonProperty("solutionNum")
     private SolutionPK pk;
 
     @JoinColumns({
