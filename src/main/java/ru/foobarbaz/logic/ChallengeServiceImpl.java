@@ -10,10 +10,7 @@ import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.repo.*;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -69,6 +66,11 @@ public class ChallengeServiceImpl implements ChallengeService {
         challenge.setAuthor(new User(author));
         challenge.setRating(Challenge.MAX_RATING);
         challenge.setCreated(new Date());
+        Set<String> processedTags = challenge.getTags().stream()
+                .map(String::trim)
+                .map(String::toLowerCase)
+                .collect(Collectors.toSet());
+        challenge.setTags(processedTags);
         challenge.setDetails(null);
         Challenge savedChallenge = challengeRepository.save(challenge);
 

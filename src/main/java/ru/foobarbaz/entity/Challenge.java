@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "challenges")
@@ -47,6 +48,10 @@ public class Challenge {
     @Min(MIN_DIFFICULTY)
     @Max(MAX_DIFFICULTY)
     private int difficulty;
+
+    @ElementCollection
+    @CollectionTable
+    private Set<String> tags;
 
     @Transient
     private int status;
@@ -120,6 +125,14 @@ public class Challenge {
 
     public void setDifficulty(int difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
+        this.tags = tags;
     }
 
     public int getStatus() {

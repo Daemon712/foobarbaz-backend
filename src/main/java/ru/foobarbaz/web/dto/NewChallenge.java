@@ -3,6 +3,7 @@ package ru.foobarbaz.web.dto;
 import ru.foobarbaz.entity.Challenge;
 
 import javax.validation.constraints.*;
+import java.util.List;
 
 public class NewChallenge {
     @NotNull
@@ -30,6 +31,8 @@ public class NewChallenge {
 
     @NotNull
     private String sample;
+
+    private List<String> tags;
 
     public String getName() {
         return name;
@@ -85,5 +88,13 @@ public class NewChallenge {
 
     public void setSample(String sample) {
         this.sample = sample;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }
