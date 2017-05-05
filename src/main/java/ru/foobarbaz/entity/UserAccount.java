@@ -1,9 +1,10 @@
 package ru.foobarbaz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -11,8 +12,7 @@ import java.util.Date;
 @Table(name = "user_accounts")
 public class UserAccount {
     @Id
-    @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
-    @Size(min = 2, max = 30)
+    @JsonIgnore
     private String username;
 
     @NotNull

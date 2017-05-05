@@ -9,6 +9,6 @@ import ru.foobarbaz.entity.UserAccount;
 import java.util.List;
 
 public interface UserAccountRepository extends JpaRepository<UserAccount, String> {
-    Page<UserAccount> findAllByUsernameContainsIgnoreCase(String username, Pageable request);
+    Page<UserAccount> findAllByUsernameContainsIgnoreCaseOrUserNameContainsIgnoreCase(String username, String name, Pageable request);
     List<UserAccount> findTop3By(Sort sort);
 }

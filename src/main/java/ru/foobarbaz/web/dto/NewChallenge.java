@@ -16,7 +16,7 @@ public class NewChallenge {
     private String shortDescription;
 
     @NotNull
-    @Size(min = 100, max = 2000)
+    @Size(min = 100, max = 5000)
     private String fullDescription;
 
     @Min(Challenge.MIN_DIFFICULTY)
@@ -24,12 +24,15 @@ public class NewChallenge {
     private int difficulty;
 
     @NotNull
+    @Size(max = 5000)
     private String template;
 
     @NotNull
+    @Size(max = 10000)
     private String unitTest;
 
     @NotNull
+    @Size(max = 5000)
     private String sample;
 
     private Set<String> tags;

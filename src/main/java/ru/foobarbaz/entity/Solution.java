@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
@@ -34,6 +35,7 @@ public class Solution {
     private List<TestResult> testResults;
 
     @NotNull
+    @Size(max = 5000)
     private String implementation;
 
     public Solution() {

@@ -19,13 +19,15 @@ public class ChallengeDetails {
     private Challenge challenge;
 
     @NotNull
-    @Size(min = 100, max = 2000)
+    @Size(min = 100, max = 5000)
     private String fullDescription;
 
     @NotNull
+    @Size(max = 5000)
     private String template;
 
     @NotNull
+    @Size(max = 10000)
     @JsonIgnore
     private String unitTest;
 

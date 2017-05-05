@@ -38,27 +38,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public UserAccount createUser(UserAccount template) {
-        String username = template.getUsername();
-        if (username == null && template.getUser() != null){
-            username = template.getUser().getUsername();
-        }
+        User user = new User();
+        BeanUtils.copyProperties(template.getUser(), user);
         String encryptedPassword = passwordEncoder.encode(template.getUser().getPassword());
-        User user = new User(username, encryptedPassword);
+        user.setPassword(encryptedPassword);
         userRepository.save(user);
 
         UserAccount account = new UserAccount();
         BeanUtils.copyProperties(template, account);
-        account.setUser(user);
-        account.setUsername(username);
+        account.setUsername(user.getUsername());
         account.setRegistrationDate(new Date());
         accountRepository.save(account);
 
-        log.debug("Created User: {}", username);
+        log.debug("Created User: {}", user.getUsername());
         return account;
     }
 
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findOne(username).orElse(null);
         if (user == null){

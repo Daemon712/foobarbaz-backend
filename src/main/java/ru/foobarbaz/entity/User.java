@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Table(name = "users")
 public class User {
     @Id
-    @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
+    @Pattern(regexp = "^[\\w\\d-._]*$")
     @Size(min = 2, max = 30)
     private String username;
 
@@ -19,6 +19,9 @@ public class User {
     @NotNull
     @Size(min = 6, max = 60)
     private String password;
+
+    @Size(min = 2, max = 30)
+    private String name;
 
     public User() {
     }
@@ -46,5 +49,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

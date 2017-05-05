@@ -10,7 +10,6 @@ import ru.foobarbaz.repo.SolutionRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -101,7 +100,6 @@ public class SolutionServiceImpl implements SolutionService {
         }
         holder.setStatus(challengeStatus);
 
-        if (holder.getSolutions() == null) holder.setSolutions(new ArrayList<>());
         if (!exists(holder.getSolutions(), solution.getPk().getSolutionNum())){
             if (holder.getSolutions().size() >= MAX_SOLUTIONS){
                 throw new IllegalStateException(MessageFormat.format("Only {0} solution for one user and one challenge are allowed", MAX_SOLUTIONS));
@@ -113,7 +111,7 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     private boolean exists(List<Solution> solutions, Integer solutionNum){
-        return solutionNum != null &&
+        return solutions != null && solutionNum != null &&
                 solutions.stream()
                         .map(Solution::getPk)
                         .map(SolutionPK::getSolutionNum)

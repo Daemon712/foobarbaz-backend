@@ -5,14 +5,17 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class NewUser {
-    @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
     @NotNull
+    @Pattern(regexp = "^[\\w\\d-._]*$")
     @Size(min = 2, max = 30)
     private String username;
 
     @NotNull
     @Size(min = 6, max = 50)
     private String password;
+
+    @Size(min = 2, max = 30)
+    private String name;
 
     private String description;
 
@@ -33,6 +36,14 @@ public class NewUser {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {

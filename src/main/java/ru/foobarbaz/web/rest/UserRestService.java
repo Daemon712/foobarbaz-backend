@@ -1,5 +1,6 @@
 package ru.foobarbaz.web.rest;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,14 +36,16 @@ public class UserRestService {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> signUp(@Valid @RequestBody NewUser user){
-        User existingUser = userRepository.findOne(user.getUsername()).orElse(null);
+    public ResponseEntity<?> signUp(@Valid @RequestBody NewUser input){
+        User existingUser = userRepository.findOne(input.getUsername()).orElse(null);
         if (existingUser != null){
             return new ResponseEntity<>("username already in use", HttpStatus.BAD_REQUEST);
         }
+        User user = new User();
+        BeanUtils.copyProperties(input, user);
         UserAccount newAccount = new UserAccount();
-        newAccount.setUser(new User(user.getUsername(), user.getPassword()));
-        newAccount.setDescription(user.getDescription());
+        newAccount.setUser(user);
+        newAccount.setDescription(input.getDescription());
         UserAccount createdUser = userService.createUser(newAccount);
         return new ResponseEntity<>(createdUser.getUser(), HttpStatus.CREATED);
     }
@@ -74,5 +77,5 @@ public class UserRestService {
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "rating"));
         return search == null
                 ? accountRepository.findAll(pageRequest)
-                : accountRepository.findAllByUsernameContainsIgnoreCase(search, pageRequest);
+                : accountRepository.findAllByUsernameContainsIgnoreCaseOrUserNameContainsIgnoreCase(search, search, pageRequest);
     }}
