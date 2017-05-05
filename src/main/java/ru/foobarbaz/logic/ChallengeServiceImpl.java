@@ -2,12 +2,17 @@ package ru.foobarbaz.logic;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.*;
 import ru.foobarbaz.exception.TestNotPassedException;
-import ru.foobarbaz.repo.*;
+import ru.foobarbaz.repo.ChallengeDetailsRepository;
+import ru.foobarbaz.repo.ChallengeRepository;
+import ru.foobarbaz.repo.UserAccountRepository;
+import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import javax.transaction.Transactional;
 import java.util.Collections;
@@ -138,5 +143,10 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public List<Challenge> getChallenges() {
         return challengeRepository.findAll();
+    }
+
+    public Page<Challenge> getChallenges(Pageable pageable) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return challengeRepository.findAllWithStatus(username, pageable);
     }
 }

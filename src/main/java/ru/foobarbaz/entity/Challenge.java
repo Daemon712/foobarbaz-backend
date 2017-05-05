@@ -2,6 +2,7 @@ package ru.foobarbaz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.beans.BeanUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -61,6 +62,11 @@ public class Challenge {
 
     public Challenge(Long challengeId){
         this.challengeId = challengeId;
+    }
+
+    public Challenge(Challenge challenge, ChallengeStatus status) {
+        BeanUtils.copyProperties(challenge, this);
+        this.status = status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED;
     }
 
     public Long getChallengeId() {

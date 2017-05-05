@@ -2,6 +2,9 @@ package ru.foobarbaz.web.rest;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,9 +64,15 @@ public class ChallengeRestService {
     }
 
     @RequestMapping
-    public Iterable<Challenge> getChallenges(){
-        List<Challenge> challenges = challengeService.getChallenges();
-        challenges.forEach(c -> c.setDetails(null));
+    public Iterable<Challenge> getChallenges(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "created") String field,
+            @RequestParam(required = false, defaultValue = "desc") String dir
+    ){
+        Sort sort = Sort.by(Sort.Direction.fromString(dir), field);
+        PageRequest pageable = PageRequest.of(page, 10, sort);
+        Page<Challenge> challenges = challengeService.getChallenges(pageable);
+        challenges.getContent().forEach(c -> c.setDetails(null));
         return challenges;
     }
 }

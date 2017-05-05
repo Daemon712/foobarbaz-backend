@@ -13,11 +13,11 @@ public class ChallengeStatus {
     @EmbeddedId
     private UserChallengePK pk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username", insertable = false, updatable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     private Challenge challenge;
 
