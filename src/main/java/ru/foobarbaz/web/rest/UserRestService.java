@@ -18,6 +18,7 @@ import ru.foobarbaz.repo.UserRepository;
 import ru.foobarbaz.web.dto.NewUser;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/users")
@@ -53,6 +54,11 @@ public class UserRestService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findOne(username).orElse(null);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/top/{property}")
+    public List<UserAccount> getTopUsers(@PathVariable String property){
+        return accountRepository.findTop3By(Sort.by(Sort.Direction.DESC, property));
     }
 
     @RequestMapping(value = "/{username}")
