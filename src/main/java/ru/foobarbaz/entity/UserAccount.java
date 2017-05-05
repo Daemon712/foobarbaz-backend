@@ -32,6 +32,8 @@ public class UserAccount {
     @Min(0)
     private int challenges;
 
+    private int rating;
+
     public UserAccount() {
     }
 
@@ -81,5 +83,13 @@ public class UserAccount {
 
     public void setChallenges(int challenges) {
         this.challenges = challenges;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }
