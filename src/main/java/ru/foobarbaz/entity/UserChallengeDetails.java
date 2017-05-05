@@ -24,7 +24,7 @@ public class UserChallengeDetails {
     @JsonIgnore
     private ChallengeDetails challengeDetails;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumns({
             @JoinColumn(name = "username", insertable = false, updatable = false),
             @JoinColumn(name = "challengeId", insertable = false, updatable = false)

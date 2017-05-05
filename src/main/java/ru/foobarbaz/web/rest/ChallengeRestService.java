@@ -60,8 +60,10 @@ public class ChallengeRestService {
         return challengeService.getChallengeDetails(challengeId).getChallenge();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping
     public Iterable<Challenge> getChallenges(){
-        return challengeService.getChallenges();
+        List<Challenge> challenges = challengeService.getChallenges();
+        challenges.forEach(c -> c.setDetails(null));
+        return challenges;
     }
 }

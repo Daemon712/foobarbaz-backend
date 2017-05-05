@@ -10,15 +10,16 @@ import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.repo.*;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
     private TestService testService;
     private ChallengeRepository challengeRepository;
-    private ChallengeStatusRepository statusRepository;
     private ChallengeDetailsRepository detailsRepository;
     private UserAccountRepository userAccountRepository;
     private UserChallengeDetailsRepository userDetailsRepository;
@@ -27,13 +28,11 @@ public class ChallengeServiceImpl implements ChallengeService {
     public ChallengeServiceImpl(
             TestService testService,
             ChallengeRepository challengeRepository,
-            ChallengeStatusRepository statusRepository,
             ChallengeDetailsRepository detailsRepository,
             UserAccountRepository userAccountRepository,
             UserChallengeDetailsRepository userDetailsRepository) {
         this.testService = testService;
         this.challengeRepository = challengeRepository;
-        this.statusRepository = statusRepository;
         this.detailsRepository = detailsRepository;
         this.userAccountRepository = userAccountRepository;
         this.userDetailsRepository = userDetailsRepository;
@@ -89,7 +88,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
         ChallengeStatus challengeStatus = new ChallengeStatus(userChallengePK);
         challengeStatus.setStatus(ChallengeStatus.SOLVED);
-        statusRepository.save(challengeStatus);
 
         Solution solution = new Solution(new SolutionPK(author, id, 1));
         solution.setImplementation(challenge.getDetails().getSample());
@@ -97,6 +95,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         solution.setTestResults(results);
 
         UserChallengeDetails userDetails = new UserChallengeDetails(userChallengePK);
+        userDetails.setStatus(challengeStatus);
         userDetails.setSolutions(Collections.singletonList(solution));
         userDetails.setRating(challenge.getRating());
         userDetails.setDifficulty(challenge.getDifficulty());
@@ -111,11 +110,7 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Challenge getChallenge(Long challengeId) {
-        Challenge challenge = challengeRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        ChallengeStatus status = user != null ? statusRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null) : null;
-        challenge.setStatus(status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED);
-        return challenge;
+        return challengeRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
@@ -130,7 +125,10 @@ public class ChallengeServiceImpl implements ChallengeService {
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);
 
-        details.getChallenge().setStatus(userDetails != null ? userDetails.getStatus().getStatus() : ChallengeStatus.NOT_STARTED);
+        int status = userDetails != null && userDetails.getStatus() != null
+                ? userDetails.getStatus().getStatus()
+                : ChallengeStatus.NOT_STARTED;
+        details.getChallenge().setStatus(status);
 
         details.setUserDetails(userDetails);
         details.getChallenge().setDetails(details);
@@ -139,20 +137,6 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public List<Challenge> getChallenges() {
-        String user = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Map<Long, Integer> statusMap =  user == null ?
-                Collections.emptyMap() :
-                StreamSupport.stream(statusRepository.findByPkUsername(user).spliterator(), false)
-                        .collect(Collectors.toMap(
-                                (status) -> status.getPk().getChallengeId(),
-                                ChallengeStatus::getStatus
-                        ));
-
-        Iterable<Challenge> challenges = challengeRepository.findAll();
-        return StreamSupport.stream(challenges.spliterator(), false)
-                .peek(c -> c.setDetails(null))
-                .peek(c -> c.setStatus(statusMap.getOrDefault(c.getChallengeId(), ChallengeStatus.NOT_STARTED)))
-                .collect(Collectors.toList());
+        return challengeRepository.findAll();
     }
 }
