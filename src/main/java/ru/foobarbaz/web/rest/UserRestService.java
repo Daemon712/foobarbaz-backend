@@ -62,7 +62,11 @@ public class UserRestService {
     }
 
     @RequestMapping
-    public Page<UserAccount> getAllUsers(@RequestParam int page){
+    public Page<UserAccount> getAllUsers(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false) String search){
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "rating"));
-        return accountRepository.findAll(pageRequest);
+        return search == null
+                ? accountRepository.findAll(pageRequest)
+                : accountRepository.findAllByUsernameContainsIgnoreCase(search, pageRequest);
     }}
