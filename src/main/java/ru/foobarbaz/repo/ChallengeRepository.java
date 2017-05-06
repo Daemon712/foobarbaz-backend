@@ -18,7 +18,6 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "and s.pk.username = :username")
     Page<Challenge> findAllWithStatus(@Param("username") String username, Pageable pageable);
 
-
     @Query( "select new ru.foobarbaz.entity.Challenge(c, s) " +
             "from Challenge c " +
             "left join ru.foobarbaz.entity.ChallengeStatus s " +
@@ -26,6 +25,17 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "and s.pk.username = :username " +
             "where c.author.username = :author")
     List<Challenge> findByAuthorWithStatus(@Param("username") String username, @Param("author") String author);
+
+    @Query( "select new ru.foobarbaz.entity.Challenge(c, s) " +
+            "from Challenge c " +
+            "inner join ru.foobarbaz.entity.UserChallengeDetails ucd " +
+            "on c.challengeId = ucd.pk.challengeId " +
+            "and ucd.pk.username = :owner " +
+            "and ucd.bookmark = true " +
+            "left join ru.foobarbaz.entity.ChallengeStatus s " +
+            "on c.challengeId = s.pk.challengeId " +
+            "and s.pk.username = :username")
+    List<Challenge> findBookmarksWithStatus(@Param("username") String username, @Param("owner") String owner);
 
     @Query( "select new ru.foobarbaz.entity.TagStatistic(t, count(c)) " +
             "from Challenge c " +

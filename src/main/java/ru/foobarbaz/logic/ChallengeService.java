@@ -13,5 +13,6 @@ public interface ChallengeService {
     ChallengeDetails getChallengeDetails(Long challengeId);
     List<Challenge> getChallenges();
     List<Challenge> getChallengesByAuthor(String username);
+    List<Challenge> getBookmarkedChallenges(String username);
     Page<Challenge> getChallenges(Pageable page);
 }

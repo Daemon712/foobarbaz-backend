@@ -40,6 +40,8 @@ public class UserChallengeDetails {
     @Max(Challenge.MAX_DIFFICULTY)
     private Integer difficulty;
 
+    private boolean bookmark;
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "holder")
     private List<Solution> solutions;
 
@@ -104,5 +106,13 @@ public class UserChallengeDetails {
 
     public void setSolutions(List<Solution> solutions) {
         this.solutions = solutions;
+    }
+
+    public boolean isBookmark() {
+        return bookmark;
+    }
+
+    public void setBookmark(boolean bookmark) {
+        this.bookmark = bookmark;
     }
 }

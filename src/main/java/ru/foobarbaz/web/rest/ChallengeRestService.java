@@ -78,4 +78,9 @@ public class ChallengeRestService {
     public List<Challenge> getChallengesByAuthor(@PathVariable String username){
         return challengeService.getChallengesByAuthor(username);
     }
+
+    @RequestMapping("/bookmark/{username}")
+    public List<Challenge> getBookmarkedChallenges(@PathVariable String username){
+        return challengeService.getBookmarkedChallenges(username);
+    }
 }
