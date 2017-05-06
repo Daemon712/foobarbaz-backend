@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.Challenge;
 import ru.foobarbaz.entity.ChallengeDetails;
+import ru.foobarbaz.entity.Rating;
 import ru.foobarbaz.entity.TestResult;
 import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
@@ -64,13 +64,20 @@ public class ChallengeRestService {
         return challengeService.getChallengeDetails(challengeId).getChallenge();
     }
 
-    @RequestMapping(value = "/{challengeId}/bookmark",
-            method = RequestMethod.POST,
-            consumes = MediaType.TEXT_PLAIN_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{challengeId}/bookmark", method = RequestMethod.POST)
     public void updateChallengeBookmark(
             @PathVariable Long challengeId,
             @RequestBody String bookmark){
         challengeService.updateChallengeBookmark(challengeId, Boolean.valueOf(bookmark));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{challengeId}/rating", method = RequestMethod.POST)
+    public Rating updateChallengeRating(
+            @PathVariable Long challengeId,
+            @Valid @RequestBody Rating rating){
+        return challengeService.updateChallengeRating(challengeId, rating);
     }
 
     @RequestMapping
