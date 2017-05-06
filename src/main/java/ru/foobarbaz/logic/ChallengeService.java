@@ -9,6 +9,7 @@ import java.util.List;
 
 public interface ChallengeService {
     Challenge createChallenge(Challenge challenge);
+    void updateChallengeBookmark(Long challengeId, boolean bookmark);
     Challenge getChallenge(Long challengeId);
     ChallengeDetails getChallengeDetails(Long challengeId);
     List<Challenge> getChallenges();

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -61,6 +62,15 @@ public class ChallengeRestService {
     @RequestMapping(value = "/{challengeId}", method = RequestMethod.GET)
     public Challenge getChallenge(@PathVariable Long challengeId){
         return challengeService.getChallengeDetails(challengeId).getChallenge();
+    }
+
+    @RequestMapping(value = "/{challengeId}/bookmark",
+            method = RequestMethod.POST,
+            consumes = MediaType.TEXT_PLAIN_VALUE)
+    public void updateChallengeBookmark(
+            @PathVariable Long challengeId,
+            @RequestBody String bookmark){
+        challengeService.updateChallengeBookmark(challengeId, Boolean.valueOf(bookmark));
     }
 
     @RequestMapping

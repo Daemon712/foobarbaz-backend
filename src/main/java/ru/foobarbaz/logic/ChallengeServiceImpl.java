@@ -114,6 +114,16 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
+    public void updateChallengeBookmark(Long challengeId, boolean bookmark) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserChallengePK pk = new UserChallengePK(username, challengeId);
+        UserChallengeDetails userChallengeDetails = userDetailsRepository.findById(pk)
+                .orElse(new UserChallengeDetails(pk));
+        userChallengeDetails.setBookmark(bookmark);
+        userDetailsRepository.save(userChallengeDetails);
+    }
+
+    @Override
     public Challenge getChallenge(Long challengeId) {
         return challengeRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
     }
