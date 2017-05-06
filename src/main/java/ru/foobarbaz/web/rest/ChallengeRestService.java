@@ -64,15 +64,18 @@ public class ChallengeRestService {
     }
 
     @RequestMapping
-    public Iterable<Challenge> getChallenges(
+    public Page<Challenge> getChallenges(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "created") String field,
             @RequestParam(required = false, defaultValue = "desc") String dir
     ){
         Sort sort = Sort.by(Sort.Direction.fromString(dir), field);
         PageRequest pageable = PageRequest.of(page, 10, sort);
-        Page<Challenge> challenges = challengeService.getChallenges(pageable);
-        challenges.getContent().forEach(c -> c.setDetails(null));
-        return challenges;
+        return challengeService.getChallenges(pageable);
+    }
+
+    @RequestMapping("/author/{username}")
+    public List<Challenge> getChallengesByAuthor(@PathVariable String username){
+        return challengeService.getChallengesByAuthor(username);
     }
 }

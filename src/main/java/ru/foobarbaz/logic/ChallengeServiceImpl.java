@@ -145,6 +145,12 @@ public class ChallengeServiceImpl implements ChallengeService {
         return challengeRepository.findAll();
     }
 
+    @Override
+    public List<Challenge> getChallengesByAuthor(String author) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return challengeRepository.findByAuthorWithStatus(username, author);
+    }
+
     public Page<Challenge> getChallenges(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return challengeRepository.findAllWithStatus(username, pageable);

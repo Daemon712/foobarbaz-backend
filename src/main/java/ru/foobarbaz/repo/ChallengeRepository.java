@@ -18,6 +18,15 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "and s.pk.username = :username")
     Page<Challenge> findAllWithStatus(@Param("username") String username, Pageable pageable);
 
+
+    @Query( "select new ru.foobarbaz.entity.Challenge(c, s) " +
+            "from Challenge c " +
+            "left join ru.foobarbaz.entity.ChallengeStatus s " +
+            "on c.challengeId = s.pk.challengeId " +
+            "and s.pk.username = :username " +
+            "where c.author.username = :author")
+    List<Challenge> findByAuthorWithStatus(@Param("username") String username, @Param("author") String author);
+
     @Query( "select new ru.foobarbaz.entity.TagStatistic(t, count(c)) " +
             "from Challenge c " +
             "inner join c.tags t " +
