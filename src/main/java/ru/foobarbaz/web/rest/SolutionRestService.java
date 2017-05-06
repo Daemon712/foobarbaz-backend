@@ -62,7 +62,7 @@ public class SolutionRestService {
     @RequestMapping(value = "/{solutionNum}", method = RequestMethod.DELETE)
     public void deleteSolution(@PathVariable long challengeId, @PathVariable int solutionNum){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        solutionRepository.delete(new SolutionPK(username, challengeId, solutionNum));
+        solutionRepository.deleteById(new SolutionPK(username, challengeId, solutionNum));
     }
 
     private Solution buildEntity(Long challengeId, Integer solutionNum, String impl){

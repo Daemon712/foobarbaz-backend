@@ -105,7 +105,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         userDetails.setRating(challenge.getRating());
         userDetails.setDifficulty(challenge.getDifficulty());
 
-        UserAccount userAccount = userAccountRepository.findOne(author)
+        UserAccount userAccount = userAccountRepository.findById(author)
                 .orElseThrow(ResourceNotFoundException::new);
         userAccount.setChallenges(userAccount.getChallenges() + 1);
         userDetails.setUserAccount(userAccount);
@@ -115,17 +115,17 @@ public class ChallengeServiceImpl implements ChallengeService {
 
     @Override
     public Challenge getChallenge(Long challengeId) {
-        return challengeRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
+        return challengeRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
     public ChallengeDetails getChallengeDetails(Long challengeId) {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserChallengeDetails userDetails = userDetailsRepository.findOne(new UserChallengePK(user, challengeId)).orElse(null);
+        UserChallengeDetails userDetails = userDetailsRepository.findById(new UserChallengePK(user, challengeId)).orElse(null);
 
         ChallengeDetails details = userDetails != null ?
                 userDetails.getChallengeDetails() :
-                detailsRepository.findOne(challengeId).orElseThrow(ResourceNotFoundException::new);
+                detailsRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
 
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);

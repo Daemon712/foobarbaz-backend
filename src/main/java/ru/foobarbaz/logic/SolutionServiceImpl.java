@@ -46,7 +46,7 @@ public class SolutionServiceImpl implements SolutionService {
         Solution solution = prepareAndValidate(template);
 
         if (solution.getHolder().getChallengeDetails() == null){
-            ChallengeDetails challengeDetails = challengeDetailsRepository.findOne(solution.getPk().getChallengeId())
+            ChallengeDetails challengeDetails = challengeDetailsRepository.findById(solution.getPk().getChallengeId())
                     .orElseThrow(ResourceNotFoundException::new);
             solution.getHolder().setChallengeDetails(challengeDetails);
         }
@@ -81,13 +81,13 @@ public class SolutionServiceImpl implements SolutionService {
     private Solution prepareAndValidate(Solution template) {
         SolutionPK pk = new SolutionPK();
         BeanUtils.copyProperties(template.getPk(), pk);
-        Solution solution = solutionRepository.findOne(pk).orElse(new Solution(pk));
+        Solution solution = solutionRepository.findById(pk).orElse(new Solution(pk));
         solution.setImplementation(template.getImplementation());
 
         UserChallengePK userChallengePK = new UserChallengePK(pk.getUsername(), pk.getChallengeId());
         UserChallengeDetails holder = solution.getHolder() != null ?
                 solution.getHolder() :
-                userChallengeDetailsRepository.findOne(userChallengePK)
+                userChallengeDetailsRepository.findById(userChallengePK)
                         .orElse(new UserChallengeDetails(userChallengePK));
         solution.setHolder(holder);
 

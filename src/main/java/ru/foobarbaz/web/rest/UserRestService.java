@@ -37,7 +37,7 @@ public class UserRestService {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@Valid @RequestBody NewUser input){
-        User existingUser = userRepository.findOne(input.getUsername()).orElse(null);
+        User existingUser = userRepository.findById(input.getUsername()).orElse(null);
         if (existingUser != null){
             return new ResponseEntity<>("username already in use", HttpStatus.BAD_REQUEST);
         }
@@ -55,7 +55,7 @@ public class UserRestService {
     @RequestMapping(value = "/current")
     public ResponseEntity<User> getCurrentUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findOne(username).orElse(null);
+        User user = userRepository.findById(username).orElse(null);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -66,7 +66,7 @@ public class UserRestService {
 
     @RequestMapping(value = "/{username}")
     public ResponseEntity<UserAccount> getUser(@PathVariable String username){
-        UserAccount user = accountRepository.findOne(username).orElseThrow(ResourceNotFoundException::new);
+        UserAccount user = accountRepository.findById(username).orElseThrow(ResourceNotFoundException::new);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
