@@ -100,7 +100,9 @@ public class SolutionServiceImpl implements SolutionService {
         }
         holder.setStatus(challengeStatus);
 
-        if (!exists(holder.getSolutions(), solution.getPk().getSolutionNum())){
+        if (holder.getSolutions() == null){
+            pk.setSolutionNum(1);
+        } else if (!exists(holder.getSolutions(), solution.getPk().getSolutionNum())){
             if (holder.getSolutions().size() >= MAX_SOLUTIONS){
                 throw new IllegalStateException(MessageFormat.format("Only {0} solution for one user and one challenge are allowed", MAX_SOLUTIONS));
             }
@@ -111,7 +113,7 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     private boolean exists(List<Solution> solutions, Integer solutionNum){
-        return solutions != null && solutionNum != null &&
+        return solutionNum != null &&
                 solutions.stream()
                         .map(Solution::getPk)
                         .map(SolutionPK::getSolutionNum)
