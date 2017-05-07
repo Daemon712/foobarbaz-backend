@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
+@SuppressWarnings("WeakerAccess")
 @Embeddable
 public class TestResult implements Serializable {
     @NotNull
@@ -19,6 +20,15 @@ public class TestResult implements Serializable {
 
     @Size(max = 250)
     private String message;
+
+    public TestResult() {
+    }
+
+    public TestResult(TestResult original) {
+        this.testName = original.getTestName();
+        this.status = original.getStatus();
+        this.message = original.getMessage();
+    }
 
     public String getTestName() {
         return testName;

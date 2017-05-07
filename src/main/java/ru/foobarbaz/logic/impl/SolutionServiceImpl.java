@@ -21,6 +21,7 @@ import ru.foobarbaz.repo.SolutionRepository;
 import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
+import javax.transaction.Transactional;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,6 +51,7 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
+    @Transactional
     public Solution saveSolution(Solution template) {
         Solution solution = prepareAndValidate(template);
         solution.setTestResults(Collections.emptyList());
@@ -58,6 +60,7 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     @Override
+    @Transactional
     public Solution testSolution(Solution template) {
         Solution solution = prepareAndValidate(template);
 
@@ -115,14 +118,10 @@ public class SolutionServiceImpl implements SolutionService {
                         .orElse(new ChallengeUserDetails(userChallengePK));
         solution.setHolder(holder);
 
-        ChallengeUserStatus challengeStatus = holder.getStatus() != null ?
-                holder.getStatus() :
-                new ChallengeUserStatus(userChallengePK);
-
-        if (challengeStatus.getStatus() == ChallengeStatus.NOT_STARTED){
-            challengeStatus.setStatus(ChallengeStatus.IN_PROGRESS);
+        if (holder.getStatus() == null) holder.setStatus(new ChallengeUserStatus(userChallengePK));
+        if (holder.getStatus().getStatus() != ChallengeStatus.SOLVED){
+            holder.getStatus().setStatus(ChallengeStatus.IN_PROGRESS);
         }
-        holder.setStatus(challengeStatus);
 
         if (holder.getSolutions() == null){
             pk.setSolutionNum(1);

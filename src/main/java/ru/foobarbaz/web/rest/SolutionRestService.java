@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.challenge.solution.Solution;
 import ru.foobarbaz.entity.challenge.solution.SolutionPK;
+import ru.foobarbaz.logic.SharedSolutionService;
 import ru.foobarbaz.logic.SolutionService;
 import ru.foobarbaz.repo.SolutionRepository;
 
@@ -15,12 +16,15 @@ import java.util.List;
 @RequestMapping(value = "api/challenges/{challengeId}/solutions")
 public class SolutionRestService {
     private SolutionRepository solutionRepository;
+    private SharedSolutionService sharedSolutionService;
     private SolutionService solutionService;
 
     public SolutionRestService(
             SolutionRepository solutionRepository,
+            SharedSolutionService sharedSolutionService,
             SolutionService solutionService) {
         this.solutionRepository = solutionRepository;
+        this.sharedSolutionService = sharedSolutionService;
         this.solutionService = solutionService;
     }
 
@@ -63,6 +67,16 @@ public class SolutionRestService {
     public void deleteSolution(@PathVariable long challengeId, @PathVariable int solutionNum){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         solutionRepository.deleteById(new SolutionPK(username, challengeId, solutionNum));
+    }
+
+    @RequestMapping(value = "/{solutionNum}/share", method = RequestMethod.POST)
+    public Long shareSolution(
+            @PathVariable long challengeId,
+            @PathVariable int solutionNum,
+            @RequestBody String comment){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        SolutionPK solutionPK = new SolutionPK(username, challengeId, solutionNum);
+        return sharedSolutionService.shareSolution(solutionPK, comment).getSharedSolutionId();
     }
 
     private Solution buildEntity(Long challengeId, Integer solutionNum, String impl){

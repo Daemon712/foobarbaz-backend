@@ -3,16 +3,12 @@ package ru.foobarbaz.entity.challenge.solution;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.List;
 
 @Entity
-public class Solution {
+public class Solution extends BaseSolution {
     @EmbeddedId
     @JsonProperty("solutionNum")
     private SolutionPK pk;
@@ -24,18 +20,6 @@ public class Solution {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
     private ChallengeUserDetails holder;
-
-    @NotNull
-    @Enumerated
-    private SolutionStatus status;
-
-    @ElementCollection
-    @CollectionTable
-    private List<TestResult> testResults;
-
-    @NotNull
-    @Size(max = 5000)
-    private String implementation;
 
     public Solution() {
     }
@@ -62,30 +46,6 @@ public class Solution {
 
     public void setHolder(ChallengeUserDetails holder) {
         this.holder = holder;
-    }
-
-    public String getImplementation() {
-        return implementation;
-    }
-
-    public void setImplementation(String implementation) {
-        this.implementation = implementation;
-    }
-
-    public SolutionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(SolutionStatus status) {
-        this.status = status;
-    }
-
-    public List<TestResult> getTestResults() {
-        return testResults;
-    }
-
-    public void setTestResults(List<TestResult> testResults) {
-        this.testResults = testResults;
     }
 
     @PreRemove

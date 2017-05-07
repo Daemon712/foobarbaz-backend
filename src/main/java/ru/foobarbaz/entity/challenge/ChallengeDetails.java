@@ -52,6 +52,13 @@ public class ChallengeDetails {
     @Enumerated
     private AccessOption shareAccess;
 
+    public ChallengeDetails() {
+    }
+
+    public ChallengeDetails(Long challengeId) {
+        this.challengeId = challengeId;
+    }
+
     public Long getChallengeId() {
         return challengeId;
     }
