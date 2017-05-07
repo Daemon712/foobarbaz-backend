@@ -18,6 +18,7 @@ import ru.foobarbaz.logic.SolutionService;
 import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.repo.ChallengeDetailsRepository;
 import ru.foobarbaz.repo.SolutionRepository;
+import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import java.text.MessageFormat;
@@ -28,6 +29,7 @@ import java.util.List;
 @Service
 public class SolutionServiceImpl implements SolutionService {
     private SolutionRepository solutionRepository;
+    private UserAccountRepository accountRepository;
     private UserChallengeDetailsRepository userChallengeDetailsRepository;
     private ChallengeDetailsRepository challengeDetailsRepository;
     private TestService testService;
@@ -36,10 +38,12 @@ public class SolutionServiceImpl implements SolutionService {
     @Autowired
     public SolutionServiceImpl(
             SolutionRepository solutionRepository,
+            UserAccountRepository accountRepository,
             UserChallengeDetailsRepository userChallengeDetailsRepository,
             ChallengeDetailsRepository challengeDetailsRepository,
             TestService testService) {
         this.solutionRepository = solutionRepository;
+        this.accountRepository = accountRepository;
         this.userChallengeDetailsRepository = userChallengeDetailsRepository;
         this.challengeDetailsRepository = challengeDetailsRepository;
         this.testService = testService;
@@ -90,6 +94,11 @@ public class SolutionServiceImpl implements SolutionService {
         details.setSolutions(details.getSolutions() + 1);
 
         UserAccount userAccount = solution.getHolder().getUserAccount();
+        if (userAccount == null) {
+            userAccount = accountRepository.findById(solution.getPk().getUsername())
+                    .orElseThrow(ResourceNotFoundException::new);
+            solution.getHolder().setUserAccount(userAccount);
+        }
         userAccount.setSolutions(userAccount.getSolutions() + 1);
     }
 
