@@ -12,10 +12,10 @@ import javax.validation.constraints.Min;
 import static ru.foobarbaz.constant.ChallengeRatingConst.*;
 
 @Entity
-public class ChallengeRating {
+public class ChallengeUserRating {
     @EmbeddedId
     @JsonIgnore
-    private UserChallengePK pk;
+    private ChallengeUserPK pk;
 
     @ManyToOne
     @JsonIgnore
@@ -29,23 +29,23 @@ public class ChallengeRating {
     @Min(MIN_DIFFICULTY)
     private int difficulty;
 
-    public ChallengeRating() {
+    public ChallengeUserRating() {
     }
 
-    public ChallengeRating(UserChallengePK pk) {
+    public ChallengeUserRating(ChallengeUserPK pk) {
         this.pk = pk;
     }
 
-    public ChallengeRating(double rating, double difficulty) {
+    public ChallengeUserRating(double rating, double difficulty) {
         this.rating = (int)Math.round(rating);
         this.difficulty = (int)Math.round(difficulty);
     }
 
-    public UserChallengePK getPk() {
+    public ChallengeUserPK getPk() {
         return pk;
     }
 
-    public void setPk(UserChallengePK pk) {
+    public void setPk(ChallengeUserPK pk) {
         this.pk = pk;
     }
 

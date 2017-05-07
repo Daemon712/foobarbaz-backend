@@ -1,7 +1,8 @@
 package ru.foobarbaz.entity.challenge;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
+import ru.foobarbaz.constant.AccessOption;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -41,7 +42,13 @@ public class ChallengeDetails {
     private int solutions;
 
     @Transient
-    private UserChallengeDetails userDetails;
+    private ChallengeUserDetails userDetails;
+
+    @Enumerated
+    private AccessOption commentAccess;
+
+    @Enumerated
+    private AccessOption shareAccess;
 
     public Long getChallengeId() {
         return challengeId;
@@ -107,11 +114,27 @@ public class ChallengeDetails {
         this.solutions = solutions;
     }
 
-    public UserChallengeDetails getUserDetails() {
+    public ChallengeUserDetails getUserDetails() {
         return userDetails;
     }
 
-    public void setUserDetails(UserChallengeDetails userDetails) {
+    public void setUserDetails(ChallengeUserDetails userDetails) {
         this.userDetails = userDetails;
+    }
+
+    public AccessOption getCommentAccess() {
+        return commentAccess;
+    }
+
+    public void setCommentAccess(AccessOption commentAccess) {
+        this.commentAccess = commentAccess;
+    }
+
+    public AccessOption getShareAccess() {
+        return shareAccess;
+    }
+
+    public void setShareAccess(AccessOption shareAccess) {
+        this.shareAccess = shareAccess;
     }
 }

@@ -4,11 +4,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
+import ru.foobarbaz.constant.ChallengeStatus;
 import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
-import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
 import ru.foobarbaz.entity.challenge.solution.Solution;
 import ru.foobarbaz.entity.challenge.solution.SolutionPK;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
@@ -21,6 +22,7 @@ import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -65,7 +67,10 @@ public class SolutionServiceImpl implements SolutionService {
         List<TestResult> results = testService.executeTests(unitTest, impl);
         solution.setTestResults(results);
 
-        int status = results.stream().mapToInt(TestResult::getStatus).max().orElse(SolutionStatus.SUCCESS);
+        SolutionStatus status = results.stream()
+                .map(TestResult::getStatus)
+                .max(Comparator.comparing(Enum::ordinal))
+                .orElse(SolutionStatus.SUCCESS);
         solution.setStatus(status);
 
         if (status == SolutionStatus.SUCCESS){
@@ -75,10 +80,10 @@ public class SolutionServiceImpl implements SolutionService {
     }
 
     private void handleSolutionSolved(Solution solution) {
-        ChallengeStatus status = solution.getHolder().getStatus();
+        ChallengeUserStatus status = solution.getHolder().getStatus();
         if (status != null && status.getStatus() == ChallengeStatus.SOLVED) return;
 
-        if (status == null) status = new ChallengeStatus();
+        if (status == null) status = new ChallengeUserStatus();
         status.setStatus(ChallengeStatus.SOLVED);
 
         ChallengeDetails details = solution.getHolder().getChallengeDetails();
@@ -94,16 +99,16 @@ public class SolutionServiceImpl implements SolutionService {
         Solution solution = solutionRepository.findById(pk).orElse(new Solution(pk));
         solution.setImplementation(template.getImplementation());
 
-        UserChallengePK userChallengePK = new UserChallengePK(pk.getUsername(), pk.getChallengeId());
-        UserChallengeDetails holder = solution.getHolder() != null ?
+        ChallengeUserPK userChallengePK = new ChallengeUserPK(pk.getUsername(), pk.getChallengeId());
+        ChallengeUserDetails holder = solution.getHolder() != null ?
                 solution.getHolder() :
                 userChallengeDetailsRepository.findById(userChallengePK)
-                        .orElse(new UserChallengeDetails(userChallengePK));
+                        .orElse(new ChallengeUserDetails(userChallengePK));
         solution.setHolder(holder);
 
-        ChallengeStatus challengeStatus = holder.getStatus() != null ?
+        ChallengeUserStatus challengeStatus = holder.getStatus() != null ?
                 holder.getStatus() :
-                new ChallengeStatus(userChallengePK);
+                new ChallengeUserStatus(userChallengePK);
 
         if (challengeStatus.getStatus() == ChallengeStatus.NOT_STARTED){
             challengeStatus.setStatus(ChallengeStatus.IN_PROGRESS);

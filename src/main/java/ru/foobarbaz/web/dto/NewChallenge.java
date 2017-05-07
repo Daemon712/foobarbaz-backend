@@ -1,5 +1,8 @@
 package ru.foobarbaz.web.dto;
 
+import ru.foobarbaz.constant.AccessOption;
+
+import javax.persistence.Enumerated;
 import javax.validation.constraints.*;
 import java.util.Set;
 
@@ -35,6 +38,12 @@ public class NewChallenge {
     @NotNull
     @Size(max = 5000)
     private String sample;
+
+    @Enumerated
+    private AccessOption commentAccess;
+
+    @Enumerated
+    private AccessOption shareAccess;
 
     @Size(max = 5)
     private Set<String> tags;
@@ -93,6 +102,22 @@ public class NewChallenge {
 
     public void setSample(String sample) {
         this.sample = sample;
+    }
+
+    public AccessOption getCommentAccess() {
+        return commentAccess;
+    }
+
+    public void setCommentAccess(AccessOption commentAccess) {
+        this.commentAccess = commentAccess;
+    }
+
+    public AccessOption getShareAccess() {
+        return shareAccess;
+    }
+
+    public void setShareAccess(AccessOption shareAccess) {
+        this.shareAccess = shareAccess;
     }
 
     public Set<String> getTags() {

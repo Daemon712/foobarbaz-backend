@@ -3,8 +3,7 @@ package ru.foobarbaz.entity.challenge.solution;
 import ru.foobarbaz.constant.SolutionStatus;
 
 import javax.persistence.Embeddable;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -14,9 +13,9 @@ public class TestResult implements Serializable {
     @NotNull
     private String testName;
 
-    @Min(SolutionStatus.SUCCESS)
-    @Max(SolutionStatus.ERROR)
-    private int status;
+    @NotNull
+    @Enumerated
+    private SolutionStatus status;
 
     @Size(max = 250)
     private String message;
@@ -29,11 +28,11 @@ public class TestResult implements Serializable {
         this.testName = testName;
     }
 
-    public int getStatus() {
+    public SolutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(SolutionStatus status) {
         this.status = status;
     }
 

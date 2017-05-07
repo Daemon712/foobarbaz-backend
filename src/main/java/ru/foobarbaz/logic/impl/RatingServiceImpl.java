@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.challenge.Challenge;
-import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
 import ru.foobarbaz.entity.user.UserAccount;
-import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
 import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.repo.UserAccountRepository;
@@ -32,10 +32,10 @@ public class RatingServiceImpl implements RatingService {
 
     @Override
     @Transactional
-    public ChallengeRating updateChallengeRating(ChallengeRating rating) {
-        UserChallengePK pk = rating.getPk();
-        ChallengeRating oldRating = userChallengeRatingRepository.findById(pk).orElse(null);
-        ChallengeRating newRating = userChallengeRatingRepository.save(rating);
+    public ChallengeUserRating updateChallengeRating(ChallengeUserRating rating) {
+        ChallengeUserPK pk = rating.getPk();
+        ChallengeUserRating oldRating = userChallengeRatingRepository.findById(pk).orElse(null);
+        ChallengeUserRating newRating = userChallengeRatingRepository.save(rating);
 
         Challenge challenge = oldRating != null
                 ? oldRating.getChallenge()
@@ -45,14 +45,14 @@ public class RatingServiceImpl implements RatingService {
         if (!pk.getUsername().equals(challenge.getAuthor().getUsername()))
             updateUserAccountRating(challenge.getAuthor().getUsername(), oldRating, newRating);
 
-        ChallengeRating avgRating = userChallengeRatingRepository.calcAvgRating(challenge.getChallengeId());
+        ChallengeUserRating avgRating = userChallengeRatingRepository.calcAvgRating(challenge.getChallengeId());
         challenge.setRating(avgRating.getRating());
         challenge.setDifficulty(avgRating.getDifficulty());
         challengeRepository.save(challenge);
         return avgRating;
     }
 
-    private void updateUserAccountRating(String username, ChallengeRating oldRating, ChallengeRating newRating) {
+    private void updateUserAccountRating(String username, ChallengeUserRating oldRating, ChallengeUserRating newRating) {
         UserAccount account = userAccountRepository.findById(username).orElseThrow(ResourceNotFoundException::new);
         int calculatedRating  = account.getRating() + convertRating(newRating);
         if (oldRating != null) calculatedRating -= convertRating(oldRating);
@@ -60,7 +60,7 @@ public class RatingServiceImpl implements RatingService {
         userAccountRepository.save(account);
     }
 
-    private static int convertRating(ChallengeRating challengeRating){
+    private static int convertRating(ChallengeUserRating challengeRating){
         int r = challengeRating.getRating();
         return (int) Math.floor(r * r / 3);
     }

@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
-@Table(name = "user_accounts")
 public class UserAccount {
     @Id
     @JsonIgnore

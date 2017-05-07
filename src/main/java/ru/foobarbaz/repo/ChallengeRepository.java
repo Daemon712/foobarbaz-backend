@@ -13,14 +13,14 @@ import java.util.List;
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query( "select new ru.foobarbaz.entity.challenge.Challenge(c, s) " +
             "from Challenge c " +
-            "left join ru.foobarbaz.entity.challenge.personal.ChallengeStatus s " +
+            "left join ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus s " +
             "on c.challengeId = s.pk.challengeId " +
             "and s.pk.username = :username")
     Page<Challenge> findAllWithStatus(@Param("username") String username, Pageable pageable);
 
     @Query( "select new ru.foobarbaz.entity.challenge.Challenge(c, s) " +
             "from Challenge c " +
-            "left join ru.foobarbaz.entity.challenge.personal.ChallengeStatus s " +
+            "left join ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus s " +
             "on c.challengeId = s.pk.challengeId " +
             "and s.pk.username = :username " +
             "where c.author.username = :author")
@@ -28,11 +28,11 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     @Query( "select new ru.foobarbaz.entity.challenge.Challenge(c, s) " +
             "from Challenge c " +
-            "inner join ru.foobarbaz.entity.challenge.personal.UserChallengeDetails ucd " +
+            "inner join ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails ucd " +
             "on c.challengeId = ucd.pk.challengeId " +
             "and ucd.pk.username = :owner " +
             "and ucd.bookmark = true " +
-            "left join ru.foobarbaz.entity.challenge.personal.ChallengeStatus s " +
+            "left join ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus s " +
             "on c.challengeId = s.pk.challengeId " +
             "and s.pk.username = :username")
     List<Challenge> findBookmarksWithStatus(@Param("username") String username, @Param("owner") String owner);

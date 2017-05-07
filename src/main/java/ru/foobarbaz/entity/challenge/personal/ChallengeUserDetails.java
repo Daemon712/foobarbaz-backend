@@ -9,11 +9,11 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class UserChallengeDetails {
+public class ChallengeUserDetails {
 
     @EmbeddedId
     @JsonIgnore
-    private UserChallengePK pk;
+    private ChallengeUserPK pk;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "username", insertable = false, updatable = false)
@@ -31,32 +31,32 @@ public class UserChallengeDetails {
             @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     })
     @JsonIgnore
-    private ChallengeStatus status;
+    private ChallengeUserStatus status;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumns({
             @JoinColumn(name = "username", insertable = false, updatable = false),
             @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     })
-    private ChallengeRating userRating;
+    private ChallengeUserRating rating;
 
     private boolean bookmark;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "holder")
     private List<Solution> solutions;
 
-    public UserChallengeDetails() {
+    public ChallengeUserDetails() {
     }
 
-    public UserChallengeDetails(UserChallengePK pk) {
+    public ChallengeUserDetails(ChallengeUserPK pk) {
         this.pk = pk;
     }
 
-    public UserChallengePK getPk() {
+    public ChallengeUserPK getPk() {
         return pk;
     }
 
-    public void setPk(UserChallengePK pk) {
+    public void setPk(ChallengeUserPK pk) {
         this.pk = pk;
     }
 
@@ -76,20 +76,20 @@ public class UserChallengeDetails {
         this.challengeDetails = challengeDetails;
     }
 
-    public ChallengeStatus getStatus() {
+    public ChallengeUserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(ChallengeStatus status) {
+    public void setStatus(ChallengeUserStatus status) {
         this.status = status;
     }
 
-    public ChallengeRating getUserRating() {
-        return userRating;
+    public ChallengeUserRating getRating() {
+        return rating;
     }
 
-    public void setUserRating(ChallengeRating userRating) {
-        this.userRating = userRating;
+    public void setRating(ChallengeUserRating rating) {
+        this.rating = rating;
     }
 
     public List<Solution> getSolutions() {

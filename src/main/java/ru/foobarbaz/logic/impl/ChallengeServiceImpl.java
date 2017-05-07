@@ -8,12 +8,12 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.*;
-import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
-import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
 import ru.foobarbaz.entity.challenge.solution.Solution;
 import ru.foobarbaz.entity.challenge.solution.SolutionPK;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
@@ -72,7 +72,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     private List<TestResult> test(ChallengeDetails details) {
         List<TestResult> results = testService.executeTests(details.getUnitTest(), details.getSample());
         boolean passed = results.size() > 0 && results.stream()
-                .mapToInt(TestResult::getStatus)
+                .map(TestResult::getStatus)
                 .allMatch(s -> s == SolutionStatus.SUCCESS);
 
         if (!passed) throw new TestNotPassedException(results);
@@ -85,11 +85,13 @@ public class ChallengeServiceImpl implements ChallengeService {
         challenge.setAuthor(new User(author));
         challenge.setRating(MAX_RATING);
         challenge.setCreated(new Date());
-        Set<String> processedTags = challenge.getTags().stream()
-                .map(String::trim)
-                .map(String::toLowerCase)
-                .collect(Collectors.toSet());
-        challenge.setTags(processedTags);
+        if (challenge.getTags() != null) {
+            Set<String> processedTags = challenge.getTags().stream()
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toSet());
+            challenge.setTags(processedTags);
+        }
         challenge.setDetails(null);
         Challenge savedChallenge = challengeRepository.save(challenge);
 
@@ -104,9 +106,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     private void saveSolution(Challenge challenge, List<TestResult> results) {
         String author = challenge.getAuthor().getUsername();
         Long id = challenge.getChallengeId();
-        UserChallengePK userChallengePK = new UserChallengePK(author, id);
+        ChallengeUserPK userChallengePK = new ChallengeUserPK(author, id);
 
-        ChallengeStatus challengeStatus = new ChallengeStatus(userChallengePK);
+        ChallengeUserStatus challengeStatus = new ChallengeUserStatus(userChallengePK);
         challengeStatus.setStatus(ChallengeStatus.SOLVED);
 
         Solution solution = new Solution(new SolutionPK(author, id, 1));
@@ -114,14 +116,14 @@ public class ChallengeServiceImpl implements ChallengeService {
         solution.setStatus(SolutionStatus.SUCCESS);
         solution.setTestResults(results);
 
-        ChallengeRating rating = new ChallengeRating(userChallengePK);
+        ChallengeUserRating rating = new ChallengeUserRating(userChallengePK);
         rating.setRating(challenge.getRating());
         rating.setDifficulty(challenge.getDifficulty());
 
-        UserChallengeDetails userDetails = new UserChallengeDetails(userChallengePK);
+        ChallengeUserDetails userDetails = new ChallengeUserDetails(userChallengePK);
         userDetails.setStatus(challengeStatus);
         userDetails.setSolutions(Collections.singletonList(solution));
-        userDetails.setUserRating(rating);
+        userDetails.setRating(rating);
 
         UserAccount userAccount = userAccountRepository.findById(author)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -134,8 +136,8 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public void updateChallengeBookmark(Long challengeId, boolean bookmark) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserChallengePK pk = new UserChallengePK(username, challengeId);
-        UserChallengeDetails userChallengeDetails = new UserChallengeDetails(pk);
+        ChallengeUserPK pk = new ChallengeUserPK(username, challengeId);
+        ChallengeUserDetails userChallengeDetails = new ChallengeUserDetails(pk);
         userChallengeDetails.setBookmark(bookmark);
         userDetailsRepository.save(userChallengeDetails);
     }
@@ -148,7 +150,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public ChallengeDetails getChallengeDetails(Long challengeId) {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserChallengeDetails userDetails = userDetailsRepository.findById(new UserChallengePK(user, challengeId)).orElse(null);
+        ChallengeUserDetails userDetails = userDetailsRepository.findById(new ChallengeUserPK(user, challengeId)).orElse(null);
 
         ChallengeDetails details = userDetails != null ?
                 userDetails.getChallengeDetails() :
@@ -157,7 +159,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);
 
-        int status = userDetails != null && userDetails.getStatus() != null
+        ChallengeStatus status = userDetails != null && userDetails.getStatus() != null
                 ? userDetails.getStatus().getStatus()
                 : ChallengeStatus.NOT_STARTED;
         details.getChallenge().setStatus(status);

@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
-import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
@@ -80,12 +80,12 @@ public class ChallengeRestService {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{challengeId}/rating", method = RequestMethod.POST)
-    public ChallengeRating updateChallengeRating(
+    public ChallengeUserRating updateChallengeRating(
             @PathVariable Long challengeId,
             @Valid @RequestBody UpdateRating input){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        ChallengeRating rating = new ChallengeRating();
-        rating.setPk(new UserChallengePK(username, challengeId));
+        ChallengeUserRating rating = new ChallengeUserRating();
+        rating.setPk(new ChallengeUserPK(username, challengeId));
         rating.setRating(input.getRating());
         rating.setDifficulty(input.getDifficulty());
         return ratingService.updateChallengeRating(rating);

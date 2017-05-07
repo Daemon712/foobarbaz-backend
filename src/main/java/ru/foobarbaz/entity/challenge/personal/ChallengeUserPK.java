@@ -5,15 +5,15 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
-public class UserChallengePK implements Serializable {
+public class ChallengeUserPK implements Serializable {
     private String username;
 
     private long challengeId;
 
-    public UserChallengePK() {
+    public ChallengeUserPK() {
     }
 
-    public UserChallengePK(String username, long challengeId) {
+    public ChallengeUserPK(String username, long challengeId) {
         this.username = username;
         this.challengeId = challengeId;
     }
@@ -37,8 +37,8 @@ public class UserChallengePK implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UserChallengePK)) return false;
-        UserChallengePK that = (UserChallengePK) o;
+        if (!(o instanceof ChallengeUserPK)) return false;
+        ChallengeUserPK that = (ChallengeUserPK) o;
         return getChallengeId() == that.getChallengeId() &&
                 Objects.equals(getUsername(), that.getUsername());
     }

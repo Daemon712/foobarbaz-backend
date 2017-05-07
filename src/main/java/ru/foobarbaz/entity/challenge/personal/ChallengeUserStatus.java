@@ -1,20 +1,16 @@
 package ru.foobarbaz.entity.challenge.personal;
 
+import ru.foobarbaz.constant.ChallengeStatus;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
-public class ChallengeStatus {
-    public final static int NOT_STARTED = 0;
-    public final static int IN_PROGRESS = 1;
-    public final static int SOLVED = 2;
-
+public class ChallengeUserStatus {
     @EmbeddedId
-    private UserChallengePK pk;
+    private ChallengeUserPK pk;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "username", insertable = false, updatable = false)
@@ -24,22 +20,22 @@ public class ChallengeStatus {
     @JoinColumn(name = "challengeId", insertable = false, updatable = false)
     private Challenge challenge;
 
-    @Min(NOT_STARTED)
-    @Max(SOLVED)
-    private int status;
+    @NotNull
+    @Enumerated
+    private ChallengeStatus status;
 
-    public ChallengeStatus() {
+    public ChallengeUserStatus() {
     }
 
-    public ChallengeStatus(UserChallengePK pk) {
+    public ChallengeUserStatus(ChallengeUserPK pk) {
         this.pk = pk;
     }
 
-    public UserChallengePK getPk() {
+    public ChallengeUserPK getPk() {
         return pk;
     }
 
-    public void setPk(UserChallengePK pk) {
+    public void setPk(ChallengeUserPK pk) {
         this.pk = pk;
     }
 
@@ -59,11 +55,11 @@ public class ChallengeStatus {
         this.challenge = challenge;
     }
 
-    public int getStatus() {
+    public ChallengeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(ChallengeStatus status) {
         this.status = status;
     }
 }

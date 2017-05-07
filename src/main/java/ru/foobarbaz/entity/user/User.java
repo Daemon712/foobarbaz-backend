@@ -8,7 +8,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "users")
+@Table(name = "user_credentials")
 public class User {
     @Id
     @Pattern(regexp = "^[\\w\\d-._]*$")

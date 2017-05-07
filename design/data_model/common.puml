@@ -35,33 +35,46 @@ class ChallengeDetails {
     int solutions
 }
 
-class ChallengeStatus {
-    int status
+class ChallengeUserStatus {
+    ChallengeStatus status
 }
 
-class ChallengeRating {
+enum ChallengeStatus {
+    NOT_STARTED
+    IN_PROGRESS
+    SOLVED
+}
+
+class ChallengeUserRating {
     int rating
     int difficulty
 }
 
-class UserChallengeDetails {
+class ChallengeUserDetails {
     UserAccount userAccount
     ChallengeDetails challengeDetails
-    ChallengeStatus status
-    ChallengeRating userRating
+    ChallengeUserStatus status
+    ChallengeUserRating rating
     boolean bookmark
 }
 
 class Solution {
     long solutionNum
-    UserChallengeDetails holder
-    int status
+    ChallengeUserDetails holder
+    SolutionStatus status
     String implementation
+}
+
+enum SolutionStatus {
+    EMPTY
+    SUCCESS
+    FAILED
+    ERROR
 }
 
 class TestResult {
     String testName
-    int status
+    SolutionStatus status
     String message
 }
 
@@ -69,11 +82,14 @@ class TestResult {
 Challenge -> User
 User -- UserAccount
 Challenge -- ChallengeDetails
-ChallengeDetails <- UserChallengeDetails
-UserChallengeDetails -> UserAccount
-UserChallengeDetails -- ChallengeStatus
-UserChallengeDetails -- ChallengeRating
-UserChallengeDetails *-- Solution
+ChallengeDetails <- ChallengeUserDetails
+ChallengeUserDetails -> UserAccount
+ChallengeUserDetails -- ChallengeUserStatus
+ChallengeUserStatus -- ChallengeStatus
+ChallengeUserDetails -- ChallengeUserRating
+ChallengeUserDetails *-- Solution
+Solution -- SolutionStatus
 Solution *-- TestResult
+TestResult -- SolutionStatus
 
 @enduml

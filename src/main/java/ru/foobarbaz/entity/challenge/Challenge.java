@@ -1,9 +1,9 @@
 package ru.foobarbaz.entity.challenge;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.BeanUtils;
-import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
+import ru.foobarbaz.constant.ChallengeStatus;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
@@ -14,11 +14,9 @@ import java.util.Set;
 import static ru.foobarbaz.constant.ChallengeRatingConst.*;
 
 @Entity
-@Table(name = "challenges")
-@JsonIgnoreProperties(ignoreUnknown=true)
 public class Challenge {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
     private Long challengeId;
 
@@ -55,7 +53,7 @@ public class Challenge {
     private Set<String> tags;
 
     @Transient
-    private int status;
+    private ChallengeStatus status;
 
     public Challenge() {
     }
@@ -64,7 +62,7 @@ public class Challenge {
         this.challengeId = challengeId;
     }
 
-    public Challenge(Challenge challenge, ChallengeStatus status) {
+    public Challenge(Challenge challenge, ChallengeUserStatus status) {
         BeanUtils.copyProperties(challenge, this);
         this.status = status != null ? status.getStatus() : ChallengeStatus.NOT_STARTED;
     }
@@ -141,11 +139,11 @@ public class Challenge {
         this.tags = tags;
     }
 
-    public int getStatus() {
+    public ChallengeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(ChallengeStatus status) {
         this.status = status;
     }
 }

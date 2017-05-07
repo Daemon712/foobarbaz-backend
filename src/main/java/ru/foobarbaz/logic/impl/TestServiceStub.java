@@ -1,6 +1,7 @@
 package ru.foobarbaz.logic.impl;
 
 import org.springframework.stereotype.Service;
+import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.logic.TestService;
 
@@ -25,7 +26,7 @@ public class TestServiceStub implements TestService {
             result.setTestName(testName);
 
             double r = random.nextDouble();
-            int status = r < 0.8 ? SUCCESS : r < 0.95 ? FAILED : ERROR;
+            SolutionStatus status = r < 0.8 ? SUCCESS : r < 0.95 ? FAILED : ERROR;
             result.setStatus(status);
 
             if (status == FAILED) result.setMessage("Expected: 1, Actual: 0");

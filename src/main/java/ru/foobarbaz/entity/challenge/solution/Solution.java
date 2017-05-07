@@ -4,17 +4,14 @@ package ru.foobarbaz.entity.challenge.solution;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.foobarbaz.constant.SolutionStatus;
-import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name = "solutions")
 public class Solution {
     @EmbeddedId
     @JsonProperty("solutionNum")
@@ -26,11 +23,11 @@ public class Solution {
     })
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JsonIgnore
-    private UserChallengeDetails holder;
+    private ChallengeUserDetails holder;
 
-    @Min(SolutionStatus.EMPTY)
-    @Max(SolutionStatus.ERROR)
-    private int status;
+    @NotNull
+    @Enumerated
+    private SolutionStatus status;
 
     @ElementCollection
     @CollectionTable
@@ -59,11 +56,11 @@ public class Solution {
         this.pk = pk;
     }
 
-    public UserChallengeDetails getHolder() {
+    public ChallengeUserDetails getHolder() {
         return holder;
     }
 
-    public void setHolder(UserChallengeDetails holder) {
+    public void setHolder(ChallengeUserDetails holder) {
         this.holder = holder;
     }
 
@@ -75,11 +72,11 @@ public class Solution {
         this.implementation = implementation;
     }
 
-    public int getStatus() {
+    public SolutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(SolutionStatus status) {
         this.status = status;
     }
 

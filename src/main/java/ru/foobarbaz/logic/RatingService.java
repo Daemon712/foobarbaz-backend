@@ -1,7 +1,7 @@
 package ru.foobarbaz.logic;
 
-import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
 
 public interface RatingService {
-    ChallengeRating updateChallengeRating(ChallengeRating rating);
+    ChallengeUserRating updateChallengeRating(ChallengeUserRating rating);
 }
