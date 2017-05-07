@@ -35,6 +35,7 @@ public class NewChallenge {
     @Size(max = 5000)
     private String sample;
 
+    @Size(max = 5)
     private Set<String> tags;
 
     public String getName() {

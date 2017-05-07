@@ -32,6 +32,7 @@ public class UserAccount {
     @Min(0)
     private int challenges;
 
+    @Min(0)
     private int rating;
 
     public UserAccount() {

@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static ru.foobarbaz.NumberUtils.intOrDefault;
-
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
     private TestService testService;
@@ -101,11 +99,14 @@ public class ChallengeServiceImpl implements ChallengeService {
         solution.setStatus(SolutionStatus.SUCCESS);
         solution.setTestResults(results);
 
+        ChallengeRating rating = new ChallengeRating(userChallengePK);
+        rating.setRating(challenge.getRating());
+        rating.setDifficulty(challenge.getDifficulty());
+
         UserChallengeDetails userDetails = new UserChallengeDetails(userChallengePK);
         userDetails.setStatus(challengeStatus);
         userDetails.setSolutions(Collections.singletonList(solution));
-        userDetails.setRating(challenge.getRating());
-        userDetails.setDifficulty(challenge.getDifficulty());
+        userDetails.setUserRating(rating);
 
         UserAccount userAccount = userAccountRepository.findById(author)
                 .orElseThrow(ResourceNotFoundException::new);
@@ -119,56 +120,9 @@ public class ChallengeServiceImpl implements ChallengeService {
     public void updateChallengeBookmark(Long challengeId, boolean bookmark) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserChallengePK pk = new UserChallengePK(username, challengeId);
-        UserChallengeDetails userChallengeDetails = userDetailsRepository.findById(pk)
-                .orElse(new UserChallengeDetails(pk));
+        UserChallengeDetails userChallengeDetails = new UserChallengeDetails(pk);
         userChallengeDetails.setBookmark(bookmark);
         userDetailsRepository.save(userChallengeDetails);
-    }
-
-    @Override
-    @Transactional
-    public Rating updateChallengeRating(Long challengeId, Rating rating) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Challenge challenge = challengeRepository.findById(challengeId)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        Rating oldUserRating = updateUserChallengeRating(challengeId, username, rating);
-        if (!username.equals(challenge.getAuthor().getUsername()))
-            updateUserAccountRating(challenge.getAuthor().getUsername(), oldUserRating, rating);
-
-        Rating newRating = userDetailsRepository.calcAvgRating(challengeId);
-        challenge.setRating(newRating.getRating());
-        challenge.setDifficulty(newRating.getDifficulty());
-        challengeRepository.save(challenge);
-        return newRating;
-    }
-
-    private Rating updateUserChallengeRating(Long challengeId, String username, Rating rating) {
-        UserChallengePK pk = new UserChallengePK(username, challengeId);
-        UserChallengeDetails userChallengeDetails = userDetailsRepository.findById(pk)
-                .orElse(new UserChallengeDetails(pk));
-
-        Rating old = new Rating();
-        old.setRating(intOrDefault(userChallengeDetails.getRating(), 0));
-        old.setDifficulty(intOrDefault(userChallengeDetails.getRating(), 0));
-
-        userChallengeDetails.setRating(rating.getRating());
-        userChallengeDetails.setDifficulty(rating.getDifficulty());
-        userDetailsRepository.save(userChallengeDetails);
-
-        return old;
-    }
-
-    private void updateUserAccountRating(String username, Rating oldRating, Rating newRating) {
-        UserAccount account = userAccountRepository.findById(username).orElseThrow(ResourceNotFoundException::new);
-        int calculatedRating  = account.getRating() - convertRating(oldRating) + convertRating(newRating);
-        account.setRating(calculatedRating);
-        userAccountRepository.save(account);
-    }
-
-    private static int convertRating(Rating challengeRating){
-        int r = challengeRating.getRating();
-        return (int) Math.floor(r * r / 3);
     }
 
     @Override

@@ -3,8 +3,6 @@ package ru.foobarbaz.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 @Entity
@@ -32,13 +30,12 @@ public class UserChallengeDetails {
     @JsonIgnore
     private ChallengeStatus status;
 
-    @Min(Challenge.MIN_RATING)
-    @Max(Challenge.MAX_RATING)
-    private Integer rating;
-
-    @Min(Challenge.MIN_DIFFICULTY)
-    @Max(Challenge.MAX_DIFFICULTY)
-    private Integer difficulty;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumns({
+            @JoinColumn(name = "username", insertable = false, updatable = false),
+            @JoinColumn(name = "challengeId", insertable = false, updatable = false)
+    })
+    private ChallengeRating userRating;
 
     private boolean bookmark;
 
@@ -84,20 +81,12 @@ public class UserChallengeDetails {
         this.status = status;
     }
 
-    public Integer getRating() {
-        return rating;
+    public ChallengeRating getUserRating() {
+        return userRating;
     }
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-    public Integer getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Integer difficulty) {
-        this.difficulty = difficulty;
+    public void setUserRating(ChallengeRating userRating) {
+        this.userRating = userRating;
     }
 
     public List<Solution> getSolutions() {

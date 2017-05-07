@@ -52,6 +52,7 @@ public class Challenge {
 
     @ElementCollection
     @CollectionTable
+    @Size(max = 5)
     private Set<String> tags;
 
     @Transient

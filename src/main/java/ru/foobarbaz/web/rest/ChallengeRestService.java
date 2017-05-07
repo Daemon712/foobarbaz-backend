@@ -8,16 +8,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.foobarbaz.entity.Challenge;
-import ru.foobarbaz.entity.ChallengeDetails;
-import ru.foobarbaz.entity.Rating;
-import ru.foobarbaz.entity.TestResult;
+import ru.foobarbaz.entity.*;
 import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
+import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.web.dto.NewChallenge;
 import ru.foobarbaz.web.dto.TestChallenge;
+import ru.foobarbaz.web.dto.UpdateRating;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,11 +26,13 @@ import java.util.List;
 @RequestMapping("api/challenges")
 public class ChallengeRestService {
     private ChallengeService challengeService;
+    private RatingService ratingService;
     private TestService testService;
 
     @Autowired
-    public ChallengeRestService(ChallengeService challengeService, TestService testService) {
+    public ChallengeRestService(ChallengeService challengeService, RatingService ratingService, TestService testService) {
         this.challengeService = challengeService;
+        this.ratingService = ratingService;
         this.testService = testService;
     }
 
@@ -74,10 +76,15 @@ public class ChallengeRestService {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{challengeId}/rating", method = RequestMethod.POST)
-    public Rating updateChallengeRating(
+    public ChallengeRating updateChallengeRating(
             @PathVariable Long challengeId,
-            @Valid @RequestBody Rating rating){
-        return challengeService.updateChallengeRating(challengeId, rating);
+            @Valid @RequestBody UpdateRating input){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        ChallengeRating rating = new ChallengeRating();
+        rating.setPk(new UserChallengePK(username, challengeId));
+        rating.setRating(input.getRating());
+        rating.setDifficulty(input.getDifficulty());
+        return ratingService.updateChallengeRating(rating);
     }
 
     @RequestMapping

@@ -23,6 +23,7 @@ class Challenge {
     Date created
     int rating
     int difficulty
+    String[] tags
 }
 
 class ChallengeDetails {
@@ -35,21 +36,19 @@ class ChallengeDetails {
 }
 
 class ChallengeStatus {
-    Challenge challenge
-    User user
     int status
 }
 
-class Tag {
-    String tag
+class ChallengeRating {
+    int rating
+    int difficulty
 }
 
 class UserChallengeDetails {
     UserAccount userAccount
     ChallengeDetails challengeDetails
     ChallengeStatus status
-    Integer rating
-    Integer difficulty
+    ChallengeRating userRating
     boolean bookmark
 }
 
@@ -68,14 +67,12 @@ class TestResult {
 
 
 Challenge -> User
-Challenge *-- Tag
 User -- UserAccount
 Challenge -- ChallengeDetails
-ChallengeStatus --> User
-ChallengeStatus --> Challenge
 ChallengeDetails <- UserChallengeDetails
 UserChallengeDetails -> UserAccount
 UserChallengeDetails -- ChallengeStatus
+UserChallengeDetails -- ChallengeRating
 UserChallengeDetails *-- Solution
 Solution *-- TestResult
 
