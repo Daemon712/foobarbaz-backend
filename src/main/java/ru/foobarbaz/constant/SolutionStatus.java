@@ -1,4 +1,4 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.constant;
 
 public interface SolutionStatus {
     int EMPTY = 0;

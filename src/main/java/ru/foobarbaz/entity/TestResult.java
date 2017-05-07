@@ -1,5 +1,7 @@
 package ru.foobarbaz.entity;
 
+import ru.foobarbaz.constant.SolutionStatus;
+
 import javax.persistence.Embeddable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

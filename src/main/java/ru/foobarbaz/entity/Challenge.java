@@ -9,15 +9,12 @@ import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.Set;
 
+import static ru.foobarbaz.constant.ChallengeRatingConst.*;
+
 @Entity
 @Table(name = "challenges")
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Challenge {
-    public static final int MAX_RATING = 5;
-    public static final int MIN_RATING = 1;
-    public static final int MAX_DIFFICULTY = 5;
-    public static final int MIN_DIFFICULTY = 1;
-
     @Id
     @GeneratedValue
     @JsonProperty("id")

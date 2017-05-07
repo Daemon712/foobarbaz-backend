@@ -1,9 +1,10 @@
 package ru.foobarbaz.web.dto;
 
-import ru.foobarbaz.entity.Challenge;
-
 import javax.validation.constraints.*;
 import java.util.Set;
+
+import static ru.foobarbaz.constant.ChallengeRatingConst.MAX_DIFFICULTY;
+import static ru.foobarbaz.constant.ChallengeRatingConst.MIN_DIFFICULTY;
 
 public class NewChallenge {
     @NotNull
@@ -19,8 +20,8 @@ public class NewChallenge {
     @Size(min = 100, max = 5000)
     private String fullDescription;
 
-    @Min(Challenge.MIN_DIFFICULTY)
-    @Max(Challenge.MAX_DIFFICULTY)
+    @Min(MIN_DIFFICULTY)
+    @Max(MAX_DIFFICULTY)
     private int difficulty;
 
     @NotNull

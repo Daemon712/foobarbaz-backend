@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static ru.foobarbaz.entity.SolutionStatus.*;
+import static ru.foobarbaz.constant.SolutionStatus.*;
 
 @Service
 public class TestServiceStub implements TestService {

@@ -8,6 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import static ru.foobarbaz.constant.ChallengeRatingConst.*;
+
 @Entity
 public class ChallengeRating {
     @EmbeddedId
@@ -18,12 +20,12 @@ public class ChallengeRating {
     @JsonIgnore
     private Challenge challenge;
 
-    @Max(Challenge.MAX_RATING)
-    @Min(Challenge.MIN_RATING)
+    @Max(MAX_RATING)
+    @Min(MIN_RATING)
     private int rating;
 
-    @Max(Challenge.MAX_DIFFICULTY)
-    @Min(Challenge.MIN_DIFFICULTY)
+    @Max(MAX_DIFFICULTY)
+    @Min(MIN_DIFFICULTY)
     private int difficulty;
 
     public ChallengeRating() {

@@ -1,18 +1,18 @@
 package ru.foobarbaz.web.dto;
 
-import ru.foobarbaz.entity.Challenge;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import static ru.foobarbaz.constant.ChallengeRatingConst.*;
+
 public class UpdateRating {
 
-    @Max(Challenge.MAX_RATING)
-    @Min(Challenge.MIN_RATING)
+    @Max(MAX_RATING)
+    @Min(MIN_RATING)
     private int rating;
 
-    @Max(Challenge.MAX_DIFFICULTY)
-    @Min(Challenge.MIN_DIFFICULTY)
+    @Max(MAX_DIFFICULTY)
+    @Min(MIN_DIFFICULTY)
     private int difficulty;
 
     public int getRating() {

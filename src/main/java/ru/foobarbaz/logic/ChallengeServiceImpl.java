@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.foobarbaz.constant.*;
 import ru.foobarbaz.entity.*;
+import ru.foobarbaz.entity.ChallengeRating;
 import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.repo.ChallengeDetailsRepository;
 import ru.foobarbaz.repo.ChallengeRepository;
@@ -20,6 +22,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static ru.foobarbaz.constant.ChallengeRatingConst.MAX_RATING;
 
 @Service
 public class ChallengeServiceImpl implements ChallengeService {
@@ -68,7 +72,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         String author = SecurityContextHolder.getContext().getAuthentication().getName();
 
         challenge.setAuthor(new User(author));
-        challenge.setRating(Challenge.MAX_RATING);
+        challenge.setRating(MAX_RATING);
         challenge.setCreated(new Date());
         Set<String> processedTags = challenge.getTags().stream()
                 .map(String::trim)

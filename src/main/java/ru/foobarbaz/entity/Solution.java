@@ -3,6 +3,7 @@ package ru.foobarbaz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import ru.foobarbaz.constant.SolutionStatus;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
