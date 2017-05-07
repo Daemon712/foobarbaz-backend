@@ -2,31 +2,81 @@
 
 class User {
     String username
+    String name
     String password
 }
 
-class Challenge {
-    long id
-    String name
+class UserAccount {
+    String username
     String description
+    Date registrationDate
+    int solutions,
+    int challenges,
+    int rating
+}
+
+class Challenge {
+    long challengeId
+    String name
+    String shortDescription
     User author
     Date created
+    int rating
+    int difficulty
+}
+
+class ChallengeDetails {
+    Challenge challenge
+    String fullDescription
     String template
-    String testClass
+    String unitTest
+    int views
+    int solutions
+}
+
+class ChallengeStatus {
+    Challenge challenge
+    User user
+    int status
+}
+
+class Tag {
+    String tag
+}
+
+class UserChallengeDetails {
+    UserAccount userAccount
+    ChallengeDetails challengeDetails
+    ChallengeStatus status
+    Integer rating
+    Integer difficulty
+    boolean bookmark
 }
 
 class Solution {
-    long id
-    String name
-    Challenge challenge
-    User user
-    float completed
+    long solutionNum
+    UserChallengeDetails holder
+    int status
     String implementation
+}
+
+class TestResult {
+    String testName
+    int status
+    String message
 }
 
 
 Challenge -> User
-Challenge <- Solution
-Solution -> User
+Challenge *-- Tag
+User -- UserAccount
+Challenge -- ChallengeDetails
+ChallengeStatus --> User
+ChallengeStatus --> Challenge
+ChallengeDetails <- UserChallengeDetails
+UserChallengeDetails -> UserAccount
+UserChallengeDetails -- ChallengeStatus
+UserChallengeDetails *-- Solution
+Solution *-- TestResult
 
 @enduml
