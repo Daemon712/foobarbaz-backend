@@ -1,6 +1,7 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.personal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ru.foobarbaz.entity.challenge.Challenge;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;

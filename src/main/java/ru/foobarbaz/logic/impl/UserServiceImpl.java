@@ -1,4 +1,4 @@
-package ru.foobarbaz.logic;
+package ru.foobarbaz.logic.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.foobarbaz.entity.User;
-import ru.foobarbaz.entity.UserAccount;
+import ru.foobarbaz.entity.user.User;
+import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.logic.UserService;
 import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserRepository;
 

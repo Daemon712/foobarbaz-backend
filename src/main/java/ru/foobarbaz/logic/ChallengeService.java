@@ -2,8 +2,8 @@ package ru.foobarbaz.logic;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import ru.foobarbaz.entity.Challenge;
-import ru.foobarbaz.entity.ChallengeDetails;
+import ru.foobarbaz.entity.challenge.Challenge;
+import ru.foobarbaz.entity.challenge.ChallengeDetails;
 
 import java.util.List;
 

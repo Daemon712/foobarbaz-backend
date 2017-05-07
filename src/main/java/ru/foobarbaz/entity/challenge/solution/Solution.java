@@ -1,9 +1,10 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.solution;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.foobarbaz.constant.SolutionStatus;
+import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;

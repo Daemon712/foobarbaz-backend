@@ -1,6 +1,6 @@
 package ru.foobarbaz.exception;
 
-import ru.foobarbaz.entity.TestResult;
+import ru.foobarbaz.entity.challenge.solution.TestResult;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.solution;
 
 import ru.foobarbaz.constant.SolutionStatus;
 

@@ -1,4 +1,4 @@
-package ru.foobarbaz.logic;
+package ru.foobarbaz.logic.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +8,20 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.*;
-import ru.foobarbaz.entity.*;
-import ru.foobarbaz.entity.ChallengeRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
+import ru.foobarbaz.entity.challenge.Challenge;
+import ru.foobarbaz.entity.challenge.ChallengeDetails;
+import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
+import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
+import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.solution.Solution;
+import ru.foobarbaz.entity.challenge.solution.SolutionPK;
+import ru.foobarbaz.entity.challenge.solution.TestResult;
+import ru.foobarbaz.entity.user.User;
+import ru.foobarbaz.entity.user.UserAccount;
 import ru.foobarbaz.exception.TestNotPassedException;
+import ru.foobarbaz.logic.ChallengeService;
+import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.repo.ChallengeDetailsRepository;
 import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.repo.UserAccountRepository;

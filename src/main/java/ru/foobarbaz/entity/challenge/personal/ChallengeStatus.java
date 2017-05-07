@@ -1,4 +1,7 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.personal;
+
+import ru.foobarbaz.entity.challenge.Challenge;
+import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;

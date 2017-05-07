@@ -1,7 +1,8 @@
-package ru.foobarbaz.logic;
+package ru.foobarbaz.logic.impl;
 
 import org.springframework.stereotype.Service;
-import ru.foobarbaz.entity.TestResult;
+import ru.foobarbaz.entity.challenge.solution.TestResult;
+import ru.foobarbaz.logic.TestService;
 
 import java.util.Arrays;
 import java.util.List;

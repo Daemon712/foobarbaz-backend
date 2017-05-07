@@ -1,4 +1,4 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

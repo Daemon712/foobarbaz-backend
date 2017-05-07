@@ -1,4 +1,4 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge;
 
 public class TagStatistic {
     private String tag;

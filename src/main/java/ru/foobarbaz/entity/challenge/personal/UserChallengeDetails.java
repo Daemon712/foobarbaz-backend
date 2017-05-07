@@ -1,6 +1,9 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.personal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ru.foobarbaz.entity.challenge.ChallengeDetails;
+import ru.foobarbaz.entity.challenge.solution.Solution;
+import ru.foobarbaz.entity.user.UserAccount;
 
 import javax.persistence.*;
 import java.util.List;

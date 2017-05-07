@@ -1,8 +1,10 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.BeanUtils;
+import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
+import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

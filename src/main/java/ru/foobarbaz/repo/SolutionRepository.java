@@ -1,8 +1,8 @@
 package ru.foobarbaz.repo;
 
 import org.springframework.data.repository.CrudRepository;
-import ru.foobarbaz.entity.Solution;
-import ru.foobarbaz.entity.SolutionPK;
+import ru.foobarbaz.entity.challenge.solution.Solution;
+import ru.foobarbaz.entity.challenge.solution.SolutionPK;
 
 import java.util.List;
 

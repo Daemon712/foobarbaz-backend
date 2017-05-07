@@ -1,6 +1,6 @@
 package ru.foobarbaz.logic;
 
-import ru.foobarbaz.entity.Solution;
+import ru.foobarbaz.entity.challenge.solution.Solution;
 
 public interface SolutionService {
     Solution saveSolution(Solution template);

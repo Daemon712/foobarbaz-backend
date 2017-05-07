@@ -1,4 +1,4 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge.personal;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;

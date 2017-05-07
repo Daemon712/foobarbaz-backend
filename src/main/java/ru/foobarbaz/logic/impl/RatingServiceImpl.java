@@ -1,12 +1,13 @@
-package ru.foobarbaz.logic;
+package ru.foobarbaz.logic.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.foobarbaz.entity.Challenge;
-import ru.foobarbaz.entity.ChallengeRating;
-import ru.foobarbaz.entity.UserAccount;
-import ru.foobarbaz.entity.UserChallengePK;
+import ru.foobarbaz.entity.challenge.Challenge;
+import ru.foobarbaz.entity.challenge.personal.ChallengeRating;
+import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserChallengeRatingRepository;

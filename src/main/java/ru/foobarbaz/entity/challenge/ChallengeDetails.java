@@ -1,6 +1,7 @@
-package ru.foobarbaz.entity;
+package ru.foobarbaz.entity.challenge;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

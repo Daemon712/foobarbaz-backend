@@ -3,8 +3,8 @@ package ru.foobarbaz.web.rest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import ru.foobarbaz.entity.Solution;
-import ru.foobarbaz.entity.SolutionPK;
+import ru.foobarbaz.entity.challenge.solution.Solution;
+import ru.foobarbaz.entity.challenge.solution.SolutionPK;
 import ru.foobarbaz.logic.SolutionService;
 import ru.foobarbaz.repo.SolutionRepository;
 

@@ -1,11 +1,20 @@
-package ru.foobarbaz.logic;
+package ru.foobarbaz.logic.impl;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.SolutionStatus;
-import ru.foobarbaz.entity.*;
+import ru.foobarbaz.entity.challenge.ChallengeDetails;
+import ru.foobarbaz.entity.challenge.personal.ChallengeStatus;
+import ru.foobarbaz.entity.challenge.personal.UserChallengeDetails;
+import ru.foobarbaz.entity.challenge.personal.UserChallengePK;
+import ru.foobarbaz.entity.challenge.solution.Solution;
+import ru.foobarbaz.entity.challenge.solution.SolutionPK;
+import ru.foobarbaz.entity.challenge.solution.TestResult;
+import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.logic.SolutionService;
+import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.repo.ChallengeDetailsRepository;
 import ru.foobarbaz.repo.SolutionRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
@@ -105,7 +114,7 @@ public class SolutionServiceImpl implements SolutionService {
             pk.setSolutionNum(1);
         } else if (!exists(holder.getSolutions(), solution.getPk().getSolutionNum())){
             if (holder.getSolutions().size() >= MAX_SOLUTIONS){
-                throw new IllegalStateException(MessageFormat.format("Only {0} solution for one user and one challenge are allowed", MAX_SOLUTIONS));
+                throw new IllegalStateException(MessageFormat.format("Only {0} solution for one personal and one challenge are allowed", MAX_SOLUTIONS));
             }
             int solNum = generateSolutionNum(holder.getSolutions());
             pk.setSolutionNum(solNum);
