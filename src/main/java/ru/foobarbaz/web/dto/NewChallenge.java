@@ -39,9 +39,11 @@ public class NewChallenge {
     @Size(max = 5000)
     private String sample;
 
+    @NotNull
     @Enumerated
     private AccessOption commentAccess;
 
+    @NotNull
     @Enumerated
     private AccessOption shareAccess;
 

@@ -44,9 +44,11 @@ public class ChallengeDetails {
     @Transient
     private ChallengeUserDetails userDetails;
 
+    @NotNull
     @Enumerated
     private AccessOption commentAccess;
 
+    @NotNull
     @Enumerated
     private AccessOption shareAccess;
 
