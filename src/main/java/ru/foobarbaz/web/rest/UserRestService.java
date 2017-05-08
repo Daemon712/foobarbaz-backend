@@ -52,19 +52,19 @@ public class UserRestService {
 
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/current")
+    @RequestMapping(value = "current")
     public ResponseEntity<User> getCurrentUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findById(username).orElse(null);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/top/{property}")
+    @RequestMapping(value = "top/{property}")
     public List<UserAccount> getTopUsers(@PathVariable String property){
         return accountRepository.findTop3By(Sort.by(Sort.Direction.DESC, property));
     }
 
-    @RequestMapping(value = "/{username}")
+    @RequestMapping(value = "account/{username}")
     public ResponseEntity<UserAccount> getUser(@PathVariable String username){
         UserAccount user = accountRepository.findById(username).orElseThrow(ResourceNotFoundException::new);
         return new ResponseEntity<>(user, HttpStatus.OK);
