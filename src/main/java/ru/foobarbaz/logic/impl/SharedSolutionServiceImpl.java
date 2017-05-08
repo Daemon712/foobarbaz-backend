@@ -78,7 +78,7 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
 
     @Override
     public List<SharedSolution> getSolutionsByUser(String username) {
-        List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByAuthor(new User(username));
+        List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByAuthorOrderByCreated(new User(username));
         sharedSolutions.forEach(this::clearDetails);
         return sharedSolutions;
     }
@@ -86,7 +86,7 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
     @Override
     public List<SharedSolution> getSolutionsByChallenge(long challengeId) {
         ChallengeDetails challengeDetails = new ChallengeDetails(challengeId);
-        List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByChallengeDetails(challengeDetails);
+        List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByChallengeDetailsOrderByCreated(challengeDetails);
         sharedSolutions.forEach(this::clearDetails);
         return sharedSolutions;
     }

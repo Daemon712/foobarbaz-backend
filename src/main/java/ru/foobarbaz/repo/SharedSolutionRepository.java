@@ -8,6 +8,6 @@ import ru.foobarbaz.entity.user.User;
 import java.util.List;
 
 public interface SharedSolutionRepository extends JpaRepository<SharedSolution, Long> {
-    List<SharedSolution> findAllByChallengeDetails(ChallengeDetails challengeId);
-    List<SharedSolution> findAllByAuthor(User author);
+    List<SharedSolution> findAllByChallengeDetailsOrderByCreated(ChallengeDetails challengeId);
+    List<SharedSolution> findAllByAuthorOrderByCreated(User author);
 }
