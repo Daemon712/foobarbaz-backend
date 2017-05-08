@@ -24,7 +24,6 @@ public class Challenge {
     private ChallengeDetails details;
 
     @NotNull
-    @Pattern(regexp = "^[\\wа-яА-Я\\d -]*$")
     @Size(min = 4, max = 50)
     private String name;
 

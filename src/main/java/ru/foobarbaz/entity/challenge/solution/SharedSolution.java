@@ -1,6 +1,7 @@
 package ru.foobarbaz.entity.challenge.solution;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.user.User;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SharedSolution extends BaseSolution {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

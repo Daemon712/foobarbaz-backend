@@ -5,6 +5,7 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.AccessOption;
 import ru.foobarbaz.constant.ChallengeStatus;
+import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
@@ -80,6 +81,16 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
     public List<SharedSolution> getSolutionsByUser(String username) {
         List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByAuthorOrderByCreated(new User(username));
         sharedSolutions.forEach(this::clearDetails);
+        sharedSolutions.forEach(sharedSolution -> {
+            Challenge source = sharedSolution.getChallengeDetails().getChallenge();
+            Challenge target = new Challenge();
+            target.setChallengeId(source.getChallengeId());
+            target.setName(source.getName());
+            target.setShortDescription(source.getShortDescription());
+            sharedSolution.setChallenge(target);
+            sharedSolution.setChallengeDetails(null);
+            sharedSolution.setAuthor(null);
+        });
         return sharedSolutions;
     }
 
@@ -88,6 +99,7 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
         ChallengeDetails challengeDetails = new ChallengeDetails(challengeId);
         List<SharedSolution> sharedSolutions = sharedSolutionRepository.findAllByChallengeDetailsOrderByCreated(challengeDetails);
         sharedSolutions.forEach(this::clearDetails);
+        sharedSolutions.forEach(sharedSolution -> sharedSolution.setChallengeDetails(null));
         return sharedSolutions;
     }
 
