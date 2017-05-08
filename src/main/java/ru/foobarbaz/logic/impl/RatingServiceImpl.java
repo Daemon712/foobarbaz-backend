@@ -37,9 +37,7 @@ public class RatingServiceImpl implements RatingService {
         ChallengeUserRating oldRating = userChallengeRatingRepository.findById(pk).orElse(null);
         ChallengeUserRating newRating = userChallengeRatingRepository.save(rating);
 
-        Challenge challenge = oldRating != null
-                ? oldRating.getChallenge()
-                : challengeRepository.findById(pk.getChallengeId())
+        Challenge challenge = challengeRepository.findById(pk.getChallengeId())
                 .orElseThrow(ResourceNotFoundException::new);
 
         if (!pk.getUsername().equals(challenge.getAuthor().getUsername()))

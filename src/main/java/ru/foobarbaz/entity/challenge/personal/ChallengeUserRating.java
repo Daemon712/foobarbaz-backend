@@ -1,11 +1,9 @@
 package ru.foobarbaz.entity.challenge.personal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import ru.foobarbaz.entity.challenge.Challenge;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -16,10 +14,6 @@ public class ChallengeUserRating {
     @EmbeddedId
     @JsonIgnore
     private ChallengeUserPK pk;
-
-    @ManyToOne
-    @JsonIgnore
-    private Challenge challenge;
 
     @Max(MAX_RATING)
     @Min(MIN_RATING)
@@ -47,14 +41,6 @@ public class ChallengeUserRating {
 
     public void setPk(ChallengeUserPK pk) {
         this.pk = pk;
-    }
-
-    public Challenge getChallenge() {
-        return challenge;
-    }
-
-    public void setChallenge(Challenge challenge) {
-        this.challenge = challenge;
     }
 
     public int getRating() {
