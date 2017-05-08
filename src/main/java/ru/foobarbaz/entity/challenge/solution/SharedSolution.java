@@ -2,21 +2,24 @@ package ru.foobarbaz.entity.challenge.solution;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.security.core.context.SecurityContextHolder;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SharedSolution extends BaseSolution {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonProperty("id")
     private Long sharedSolutionId;
 
     @NotNull
@@ -38,8 +41,15 @@ public class SharedSolution extends BaseSolution {
     @Size(max = 300)
     private String comment;
 
-    @Min(0)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<User> likes;
+
+    @Transient
     private int rating;
+
+    @Transient
+    private boolean liked;
 
     public Long getSharedSolutionId() {
         return sharedSolutionId;
@@ -89,11 +99,36 @@ public class SharedSolution extends BaseSolution {
         this.comment = comment;
     }
 
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
+    }
+
     public int getRating() {
         return rating;
     }
 
     public void setRating(int rating) {
         this.rating = rating;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
+
+    @PostLoad
+    public void calculateRating(){
+        if (getLikes() == null) return;
+        setRating(getLikes().size());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        setLiked(getLikes().contains(new User(username)));
     }
 }

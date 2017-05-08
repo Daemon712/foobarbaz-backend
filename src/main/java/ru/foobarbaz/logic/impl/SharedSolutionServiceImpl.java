@@ -2,6 +2,7 @@ package ru.foobarbaz.logic.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.AccessOption;
 import ru.foobarbaz.constant.ChallengeStatus;
@@ -58,9 +59,13 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
             throw new DeniedOperationException("the operation will be allowed after the challenge is solved");
         }
 
+        UserAccount userAccount = solution.getHolder().getUserAccount();
+        userAccount.setSharedSolutions(userAccount.getSharedSolutions() + 1);
+        userAccountRepository.save(userAccount);
+
         SharedSolution sharedSolution = new SharedSolution();
         sharedSolution.setChallengeDetails(new ChallengeDetails(solutionPK.getChallengeId()));
-        sharedSolution.setAuthor(new User(solutionPK.getUsername()));
+        sharedSolution.setAuthor(userAccount.getUser());
         sharedSolution.setStatus(solution.getStatus());
         sharedSolution.setImplementation(solution.getImplementation());
         sharedSolution.setCreated(new Date());
@@ -69,10 +74,6 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
                 .map(TestResult::new)
                 .collect(Collectors.toList());
         sharedSolution.setTestResults(testResults);
-
-        UserAccount userAccount = solution.getHolder().getUserAccount();
-        userAccount.setSharedSolutions(userAccount.getSharedSolutions() + 1);
-        userAccountRepository.save(userAccount);
 
         return sharedSolutionRepository.save(sharedSolution);
     }
@@ -132,7 +133,27 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
     }
 
     @Override
-    public void updateLike(long sharedSolutionId, boolean like) {
+    public SharedSolution updateLike(long sharedSolutionId, boolean like) {
+        SharedSolution sharedSolution = sharedSolutionRepository.findById(sharedSolutionId)
+                .orElseThrow(ResourceNotFoundException::new);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (username.equals(sharedSolution.getAuthor().getUsername()))
+            throw new DeniedOperationException("you can't like your own solution");
+
+        UserAccount author = sharedSolution.getAuthor().getAccount();
+
+        if (like) {
+            if (sharedSolution.isLiked()) throw new DeniedOperationException("you can't like solution twice");
+            sharedSolution.getLikes().add(new User(username));
+            author.setRating(author.getRating() + 1);
+        } else {
+            if (!sharedSolution.isLiked()) throw new DeniedOperationException("you can't remove like which doesn't exist");
+            sharedSolution.getLikes().remove(new User(username));
+            author.setRating(author.getRating() - 1);
+        }
+
+        userAccountRepository.save(author);
+        return sharedSolutionRepository.save(sharedSolution);
     }
 }

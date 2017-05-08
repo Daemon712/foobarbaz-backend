@@ -10,5 +10,5 @@ public interface SharedSolutionService {
     List<SharedSolution> getSolutionsByUser(String username);
     List<SharedSolution> getSolutionsByChallenge(long challengeId);
     SharedSolution getSharedSolution(long sharedSolutionId);
-    void updateLike(long sharedSolutionId, boolean like);
+    SharedSolution updateLike(long sharedSolutionId, boolean like);
 }
