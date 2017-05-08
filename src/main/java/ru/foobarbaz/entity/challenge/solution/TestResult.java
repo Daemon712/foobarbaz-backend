@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Objects;
 
 @SuppressWarnings("WeakerAccess")
 @Embeddable
@@ -22,6 +23,17 @@ public class TestResult implements Serializable {
     private String message;
 
     public TestResult() {
+    }
+
+    public TestResult(String testName, SolutionStatus status) {
+        this.testName = testName;
+        this.status = status;
+    }
+
+    public TestResult(String testName, SolutionStatus status, String message) {
+        this.testName = testName;
+        this.status = status;
+        this.message = message;
     }
 
     public TestResult(TestResult original) {
@@ -52,5 +64,20 @@ public class TestResult implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TestResult)) return false;
+        TestResult that = (TestResult) o;
+        return Objects.equals(getTestName(), that.getTestName()) &&
+                getStatus() == that.getStatus() &&
+                Objects.equals(getMessage(), that.getMessage());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getTestName(), getStatus(), getMessage());
     }
 }
