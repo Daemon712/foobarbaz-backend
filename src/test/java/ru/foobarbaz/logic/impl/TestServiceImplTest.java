@@ -1,10 +1,12 @@
 package ru.foobarbaz.logic.impl;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.logic.TestService;
+import ru.foobarbaz.logic.impl.test.TestServiceImpl;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -14,14 +16,37 @@ public class TestServiceImplTest {
     private TestService testService = new TestServiceImpl();
 
     @Test
-    public void testDiv() throws Exception {
+    public void testSimpleImpl() throws Exception {
         String test = new String(Files.readAllBytes(Paths.get("samples", "test", "DivTest.java")));
         String code = new String(Files.readAllBytes(Paths.get("samples", "impl", "DivImpl.java")));
         List<TestResult> results = testService.executeTests(test, code);
-        Assert.assertEquals(results.size(), 4);
-        Assert.assertTrue(results.contains(new TestResult("testOneDivOne", SolutionStatus.SUCCESS)));
-        Assert.assertTrue(results.contains(new TestResult("testFourDivTwo", SolutionStatus.SUCCESS)));
-        Assert.assertTrue(results.contains(new TestResult("testOneDivZero", SolutionStatus.ERROR, "java.lang.ArithmeticException: / by zero")));
-        Assert.assertTrue(results.contains(new TestResult("testZeroDivOne", SolutionStatus.FAILED, "expected:<0> but was:<1>")));
+        results.forEach(System.out::println);
+        Assert.assertEquals(4, results.size());
+        Assert.assertTrue(results.contains(new TestResult("testOneDivOne(DivTest)", SolutionStatus.SUCCESS)));
+        Assert.assertTrue(results.contains(new TestResult("testFourDivTwo(DivTest)", SolutionStatus.SUCCESS)));
+        Assert.assertTrue(results.contains(new TestResult("testOneDivZero(DivTest)", SolutionStatus.ERROR, "java.lang.ArithmeticException: / by zero")));
+        Assert.assertTrue(results.contains(new TestResult("testZeroDivOne(DivTest)", SolutionStatus.FAILED, "expected:<1> but was:<0>")));
+    }
+
+    @Test
+    public void testEmptyImpl() throws Exception {
+        String test = new String(Files.readAllBytes(Paths.get("samples", "test", "DivTest.java")));
+        String code = "...";
+        List<TestResult> results = testService.executeTests(test, code);
+        results.forEach(System.out::println);
+        Assert.assertEquals(1, results.size());
+        String message = "java.lang.IllegalArgumentException: No class definition found in src:\n...";
+        Assert.assertTrue(results.contains(new TestResult("*", SolutionStatus.ERROR, message)));
+    }
+
+    @Test
+    @Ignore
+    public void testBadImpl() throws Exception {
+        String test = new String(Files.readAllBytes(Paths.get("samples", "test", "DivTest.java")));
+        String code = "public class DivImpl { Syntax error }";
+        List<TestResult> results = testService.executeTests(test, code);
+        results.forEach(System.out::println);
+        Assert.assertEquals(1, results.size());
+        Assert.assertTrue(results.contains(new TestResult("*", SolutionStatus.ERROR, "java.lang.ArithmeticException: / by zero")));
     }
 }

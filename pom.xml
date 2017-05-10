@@ -6,7 +6,7 @@
 	<groupId>ru.foobarbaz</groupId>
 	<artifactId>foobarbaz</artifactId>
 	<version>0.0.2</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>foobarbaz</name>
 	<description>FooBarBaz</description>
@@ -51,11 +51,6 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
 		</dependency>
 
 		<dependency>

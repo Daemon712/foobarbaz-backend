@@ -80,4 +80,13 @@ public class TestResult implements Serializable {
     public int hashCode() {
         return Objects.hash(getTestName(), getStatus(), getMessage());
     }
+
+    @Override
+    public String toString() {
+        return "TestResult{" +
+                "testName='" + testName + '\'' +
+                ", status=" + status +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }
