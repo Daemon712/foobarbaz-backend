@@ -20,7 +20,7 @@ import ru.foobarbaz.logic.ChallengeService;
 import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.web.dto.NewChallenge;
-import ru.foobarbaz.web.dto.TestChallenge;
+import ru.foobarbaz.web.dto.TestRequest;
 import ru.foobarbaz.web.dto.UpdateRating;
 
 import javax.validation.Valid;
@@ -61,8 +61,8 @@ public class ChallengeRestService {
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public List<TestResult> testNewChallenge(@Valid @RequestBody TestChallenge input){
-        return testService.executeTests(input.getUnitTest(), input.getSample());
+    public List<TestResult> testNewChallenge(@Valid @RequestBody TestRequest input){
+        return testService.executeTests(input.getTest(), input.getCode());
     }
 
     @RequestMapping(value = "/{challengeId}", method = RequestMethod.GET)

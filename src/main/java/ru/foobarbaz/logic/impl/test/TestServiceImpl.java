@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
+import ru.foobarbaz.exception.CompilationException;
 import ru.foobarbaz.logic.TestService;
 
 import java.io.IOException;
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -43,23 +46,36 @@ public class TestServiceImpl implements TestService {
             String testClassName = parseClassName(test);
             String implClassName = parseClassName(impl);
 
-            Path testFile = root.resolve(testClassName + ".java");
-            Path implFile = root.resolve(implClassName + ".java");
-            Files.write(testFile, test.getBytes());
-            Files.write(implFile, impl.getBytes());
+            compile(root, implClassName, impl);
+            compile(root, testClassName, test);
 
-            String compileCommand = getCompileCommand(root);
-            Runtime.getRuntime().exec(compileCommand).waitFor(5, TimeUnit.SECONDS);
             String runTestCommand = getRunTestCommand(root, testClassName);
-            Process process = Runtime.getRuntime().exec(runTestCommand);
-            byte[] data = read(process.getInputStream());
-            process.waitFor(5, TimeUnit.SECONDS);
+            Process runTestProcess = Runtime.getRuntime().exec(runTestCommand);
+            byte[] data = read(runTestProcess.getInputStream());
+            runTestProcess.waitFor(5, TimeUnit.SECONDS);
+
             Result result =resultReader.readValue(data);
             return result.getItems().stream().map(converter).collect(Collectors.toList());
+        } catch (CompilationException e){
+            String testName = "compilationError(" + e.getClassName() + ")";
+            return Collections.singletonList(new TestResult(testName, SolutionStatus.ERROR, e.getMessage()));
         } catch (Exception e){
-            return Collections.singletonList(new TestResult("*", SolutionStatus.ERROR, e.toString()));
+            throw new RuntimeException(e);
         } finally {
             tryToClearAppDir();
+        }
+    }
+
+    private void compile(Path root, String className, String source) throws Exception{
+        Path implFile = root.resolve(className + ".java");
+        Files.write(implFile, source.getBytes());
+        String compileImplCommand = getCompileCommand(root, className);
+        Process compileImplProcess = Runtime.getRuntime().exec(compileImplCommand);
+        String compileImplError = new String(read(compileImplProcess.getErrorStream()));
+        compileImplProcess.waitFor(5, TimeUnit.SECONDS);
+        if (!compileImplError.isEmpty()) {
+            String message = compileImplError.replace(root.toString(), "").trim();
+            throw new CompilationException(className, message);
         }
     }
 
@@ -74,25 +90,23 @@ public class TestServiceImpl implements TestService {
             }
             total += result;
         }
-        return b;
+        return Arrays.copyOf(b, total);
     }
 
-    private String getRunTestCommand(Path root, String testClassName) {
-        return "java -cp " +
-                TEST_RUNNER_JAR + ";" + root +
-                " ru.foobarbaz.testrunner.Main " + testClassName;
+    private String getRunTestCommand(Path root, String className) {
+        return MessageFormat.format("java -cp {0};{1} ru.foobarbaz.testrunner.Main {2}", TEST_RUNNER_JAR, root, className);
     }
 
-    private String getCompileCommand(Path root) {
-        return "javac -cp " + TEST_RUNNER_JAR + " " + root.toString() + "\\*.java";
+    private String getCompileCommand(Path root, String className) {
+        return MessageFormat.format("javac -cp {0};{1} {1}\\{2}.java", TEST_RUNNER_JAR, root, className);
     }
 
     private void tryToClearAppDir(){
         try {
             Files.walk(APP_TEMP_DIR).sorted(Comparator.reverseOrder()).forEach(path -> {
                 try {
-                    if (!APP_TEMP_DIR.equals(path)) return;
-                    if (!TEST_RUNNER_JAR.equals(path)) return;
+                    if (APP_TEMP_DIR.equals(path)) return;
+                    if (TEST_RUNNER_JAR.equals(path)) return;
                     Files.deleteIfExists(path);
                 } catch (IOException e) {
                     e.printStackTrace();

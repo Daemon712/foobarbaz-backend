@@ -1,7 +1,6 @@
 package ru.foobarbaz.logic.impl;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
@@ -40,13 +39,16 @@ public class TestServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void testBadImpl() throws Exception {
         String test = new String(Files.readAllBytes(Paths.get("samples", "test", "DivTest.java")));
-        String code = "public class DivImpl { Syntax error }";
+        String code = "public class DivImpl ";
         List<TestResult> results = testService.executeTests(test, code);
         results.forEach(System.out::println);
         Assert.assertEquals(1, results.size());
-        Assert.assertTrue(results.contains(new TestResult("*", SolutionStatus.ERROR, "java.lang.ArithmeticException: / by zero")));
+        Assert.assertTrue(results.contains(new TestResult("compilationError(DivTest)", SolutionStatus.ERROR,
+                "\\DivImpl.java:1: error: reached end of file while parsing\n" +
+                "public class DivImpl \n" +
+                "                    ^\n" +
+                "1 error")));
     }
 }
