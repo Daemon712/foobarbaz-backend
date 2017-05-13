@@ -6,15 +6,15 @@ import javax.validation.constraints.Size;
 
 public class NewUser {
     @NotNull
-    @Pattern(regexp = "^[\\w\\d-._]*$")
-    @Size(min = 2, max = 30)
+    @Pattern(regexp = "^[\\w\\d-_]*$")
+    @Size(max = 30)
     private String username;
 
     @NotNull
     @Size(min = 6, max = 50)
     private String password;
 
-    @Size(min = 2, max = 30)
+    @Size(max = 50)
     private String name;
 
     private String description;

@@ -40,14 +40,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     public UserAccount createUser(UserAccount template) {
         User user = new User();
-        BeanUtils.copyProperties(template.getUser(), user);
+        String username = template.getUser().getUsername().toLowerCase();
+        user.setUsername(username);
         String encryptedPassword = passwordEncoder.encode(template.getUser().getPassword());
         user.setPassword(encryptedPassword);
+        user.setName(template.getUser().getName());
         userRepository.save(user);
 
         UserAccount account = new UserAccount();
         BeanUtils.copyProperties(template, account);
-        account.setUsername(user.getUsername());
+        account.setUsername(username);
         account.setRegistrationDate(new Date());
         accountRepository.save(account);
 

@@ -12,8 +12,8 @@ import java.util.Objects;
 @Table(name = "user_credentials")
 public class User {
     @Id
-    @Pattern(regexp = "^[\\w\\d-._]*$")
-    @Size(min = 2, max = 30)
+    @Pattern(regexp = "^[\\w\\d-_]*$")
+    @Size(max = 30)
     private String username;
 
     @JsonIgnore
@@ -25,7 +25,7 @@ public class User {
     @Size(min = 6, max = 60)
     private String password;
 
-    @Size(min = 2, max = 30)
+    @Size(max = 50)
     private String name;
 
     public User() {
