@@ -118,7 +118,7 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
             String username = sharedSolution.getAuthor().getUsername();
             ChallengeUserPK pk = new ChallengeUserPK(username, sharedSolution.getChallengeDetails().getChallengeId());
             ChallengeUserDetails userDetails = userChallengeDetailsRepository.findById(pk).orElse(null);
-            if (challengeSolved(userDetails)){
+            if (!challengeSolved(userDetails)){
                 //Hide the implementation from users without his own solution
                 sharedSolution.setImplementation(null);
             }
