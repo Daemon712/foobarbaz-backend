@@ -34,21 +34,21 @@ public class TestServiceImplTest {
         List<TestResult> results = testService.executeTests(test, code);
         results.forEach(System.out::println);
         Assert.assertEquals(1, results.size());
-        String message = "java.lang.IllegalArgumentException: No class definition found in src:\n...";
-        Assert.assertTrue(results.contains(new TestResult("*", SolutionStatus.ERROR, message)));
+        String message = "No class definition found in src:\n...";
+        Assert.assertTrue(results.contains(new TestResult("compilationError(...)", SolutionStatus.ERROR, message)));
     }
 
     @Test
     public void testBadImpl() throws Exception {
         String test = new String(Files.readAllBytes(Paths.get("samples", "test", "DivTest.java")));
-        String code = "public class DivImpl ";
+        String code = "public class DivImpl";
         List<TestResult> results = testService.executeTests(test, code);
         results.forEach(System.out::println);
         Assert.assertEquals(1, results.size());
-        Assert.assertTrue(results.contains(new TestResult("compilationError(DivTest)", SolutionStatus.ERROR,
-                "\\DivImpl.java:1: error: reached end of file while parsing\n" +
-                "public class DivImpl \n" +
-                "                    ^\n" +
-                "1 error")));
+        String message = "\\DivImpl.java:1: error: reached end of file while parsing\r\n" +
+                "public class DivImpl\r\n" +
+                "                    ^\r\n" +
+                "1 error";
+        Assert.assertTrue(results.contains(new TestResult("compilationError(DivImpl)", SolutionStatus.ERROR, message)));
     }
 }
