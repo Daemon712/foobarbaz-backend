@@ -121,7 +121,7 @@ public class TestServiceImpl implements TestService {
 
     private static String parseClassName(String source){
         Matcher m = CLASS_NAME_PATTERN.matcher(source);
-        if (!m.find()) throw new IllegalArgumentException("No class definition found in src:\n" + source);
+        if (!m.find()) throw new CompilationException("...", "No class definition found in src:\n" + source);
         return m.group(CLASS_NAME_GROUP);
     }
 }

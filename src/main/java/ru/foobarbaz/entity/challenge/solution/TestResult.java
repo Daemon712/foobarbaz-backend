@@ -71,9 +71,10 @@ public class TestResult implements Serializable {
         if (this == o) return true;
         if (!(o instanceof TestResult)) return false;
         TestResult that = (TestResult) o;
-        return Objects.equals(getTestName(), that.getTestName()) &&
-                getStatus() == that.getStatus() &&
-                Objects.equals(getMessage(), that.getMessage());
+        boolean namesEqual = Objects.equals(getTestName(), that.getTestName());
+        boolean statusesEqual = getStatus() == that.getStatus();
+        boolean messagesEqual = Objects.equals(getMessage(), that.getMessage());
+        return namesEqual && statusesEqual && messagesEqual;
     }
 
     @Override

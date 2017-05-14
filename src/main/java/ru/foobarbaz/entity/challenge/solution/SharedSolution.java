@@ -3,7 +3,7 @@ package ru.foobarbaz.entity.challenge.solution;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.security.core.context.SecurityContextHolder;
+import ru.foobarbaz.entity.AbleToLikes;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.user.User;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SharedSolution extends BaseSolution {
+public class SharedSolution extends BaseSolution implements AbleToLikes{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
@@ -44,12 +44,6 @@ public class SharedSolution extends BaseSolution {
     @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     private Set<User> likes;
-
-    @Transient
-    private int rating;
-
-    @Transient
-    private boolean liked;
 
     public Long getSharedSolutionId() {
         return sharedSolutionId;
@@ -105,30 +99,5 @@ public class SharedSolution extends BaseSolution {
 
     public void setLikes(Set<User> likes) {
         this.likes = likes;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public boolean isLiked() {
-        return liked;
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public void setLiked(boolean liked) {
-        this.liked = liked;
-    }
-
-    @PostLoad
-    public void calculateRating(){
-        if (getLikes() == null) return;
-        setRating(getLikes().size());
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        setLiked(getLikes().contains(new User(username)));
     }
 }

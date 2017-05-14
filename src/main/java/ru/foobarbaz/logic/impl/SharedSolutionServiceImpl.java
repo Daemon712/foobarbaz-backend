@@ -2,7 +2,6 @@ package ru.foobarbaz.logic.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.AccessOption;
 import ru.foobarbaz.constant.ChallengeStatus;
@@ -17,6 +16,7 @@ import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
 import ru.foobarbaz.exception.DeniedOperationException;
+import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.logic.SharedSolutionService;
 import ru.foobarbaz.repo.SharedSolutionRepository;
 import ru.foobarbaz.repo.SolutionRepository;
@@ -33,16 +33,19 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
     private UserChallengeDetailsRepository userChallengeDetailsRepository;
     private SolutionRepository solutionRepository;
     private SharedSolutionRepository sharedSolutionRepository;
+    private RatingService ratingService;
     private UserAccountRepository userAccountRepository;
 
     @Autowired
     public SharedSolutionServiceImpl(UserChallengeDetailsRepository userChallengeDetailsRepository,
                                      SolutionRepository solutionRepository,
                                      SharedSolutionRepository sharedSolutionRepository,
+                                     RatingService ratingService,
                                      UserAccountRepository userAccountRepository) {
         this.userChallengeDetailsRepository = userChallengeDetailsRepository;
         this.solutionRepository = solutionRepository;
         this.sharedSolutionRepository = sharedSolutionRepository;
+        this.ratingService = ratingService;
         this.userAccountRepository = userAccountRepository;
     }
 
@@ -136,24 +139,7 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
     public SharedSolution updateLike(long sharedSolutionId, boolean like) {
         SharedSolution sharedSolution = sharedSolutionRepository.findById(sharedSolutionId)
                 .orElseThrow(ResourceNotFoundException::new);
-
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (username.equals(sharedSolution.getAuthor().getUsername()))
-            throw new DeniedOperationException("you can't like your own solution");
-
-        UserAccount author = sharedSolution.getAuthor().getAccount();
-
-        if (like) {
-            if (sharedSolution.isLiked()) throw new DeniedOperationException("you can't like solution twice");
-            sharedSolution.getLikes().add(new User(username));
-            author.setRating(author.getRating() + 1);
-        } else {
-            if (!sharedSolution.isLiked()) throw new DeniedOperationException("you can't remove like which doesn't exist");
-            sharedSolution.getLikes().remove(new User(username));
-            author.setRating(author.getRating() - 1);
-        }
-
-        userAccountRepository.save(author);
+        this.ratingService.updateLikes(sharedSolution, like);
         return sharedSolutionRepository.save(sharedSolution);
     }
 }
