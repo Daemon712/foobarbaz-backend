@@ -45,6 +45,13 @@ public class SharedSolution extends BaseSolution implements AbleToLikes{
     @JsonIgnore
     private Set<User> likes;
 
+    public SharedSolution() {
+    }
+
+    public SharedSolution(Long sharedSolutionId) {
+        this.sharedSolutionId = sharedSolutionId;
+    }
+
     public Long getSharedSolutionId() {
         return sharedSolutionId;
     }

@@ -34,6 +34,13 @@ public abstract class BaseComment implements AbleToLikes{
     @JsonIgnore
     private Set<User> likes;
 
+    BaseComment() {
+    }
+
+    BaseComment(String text) {
+        this.text = text;
+    }
+
     public Long getCommentId() {
         return commentId;
     }

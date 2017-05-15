@@ -14,6 +14,14 @@ public class ChallengeComment extends BaseComment {
     @JsonIgnore
     private Challenge challenge;
 
+    public ChallengeComment() {
+    }
+
+    public ChallengeComment(String text, Challenge challenge) {
+        super(text);
+        this.challenge = challenge;
+    }
+
     public Challenge getChallenge() {
         return challenge;
     }
