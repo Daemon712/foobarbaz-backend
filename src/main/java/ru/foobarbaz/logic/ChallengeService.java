@@ -16,4 +16,5 @@ public interface ChallengeService {
     List<Challenge> getChallengesByAuthor(String username);
     List<Challenge> getBookmarkedChallenges(String username);
     Page<Challenge> getChallenges(Pageable page);
+    List<Challenge> quickSearchChallenges(String name);
 }

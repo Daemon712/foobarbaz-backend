@@ -51,4 +51,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "group by t " +
             "order by count(c) desc")
     List<TagStatistic> searchTags(@Param("tag") String tag);
+
+    List<Challenge> findTop10ByNameContainsIgnoreCase(String name);
+    List<Challenge> findTop10By();
 }

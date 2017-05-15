@@ -12,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
@@ -110,5 +110,10 @@ public class ChallengeRestService {
     @RequestMapping("/bookmark/{username}")
     public List<Challenge> getBookmarkedChallenges(@PathVariable String username){
         return challengeService.getBookmarkedChallenges(username);
+    }
+
+    @RequestMapping("/quick-search/{name}")
+    public List<Challenge> quickSearch(@PathVariable String name){
+        return challengeService.quickSearchChallenges(name);
     }
 }

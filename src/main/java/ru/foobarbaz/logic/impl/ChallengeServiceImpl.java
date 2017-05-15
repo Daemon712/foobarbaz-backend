@@ -191,4 +191,11 @@ public class ChallengeServiceImpl implements ChallengeService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return challengeRepository.findAllWithStatus(username, pageable);
     }
+
+    @Override
+    public List<Challenge> quickSearchChallenges(String name) {
+        return name == null
+                ? challengeRepository.findTop10By()
+                : challengeRepository.findTop10ByNameContainsIgnoreCase(name);
+    }
 }
