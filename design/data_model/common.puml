@@ -56,6 +56,7 @@ class ChallengeUserDetails {
     ChallengeUserStatus status
     ChallengeUserRating rating
     boolean bookmark
+    Solution[] solutions
 }
 
 class Solution {
@@ -63,6 +64,7 @@ class Solution {
     ChallengeUserDetails holder
     SolutionStatus status
     String implementation
+    TestResult[] testResults
 }
 
 enum SolutionStatus {
@@ -78,6 +80,15 @@ class TestResult {
     String message
 }
 
+class ChallengeComment {
+    long commentId
+    Challenge challenge
+    User author
+    String text
+    Date created
+    User[] likes
+}
+
 
 Challenge -> User
 User -- UserAccount
@@ -88,8 +99,11 @@ ChallengeUserDetails -- ChallengeUserStatus
 ChallengeUserStatus -- ChallengeStatus
 ChallengeUserDetails -- ChallengeUserRating
 ChallengeUserDetails *-- Solution
-Solution -- SolutionStatus
+SolutionStatus -- TestResult
+SolutionStatus -- Solution
 Solution *-- TestResult
-TestResult -- SolutionStatus
+Challenge *-- ChallengeComment
+ChallengeComment -> User
+ChallengeComment <-> User
 
 @enduml

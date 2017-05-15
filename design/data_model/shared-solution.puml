@@ -1,0 +1,64 @@
+@startuml
+
+class User {
+    String username
+    String name
+    String password
+}
+
+class Challenge {
+    long challengeId
+    String name
+    String shortDescription
+    User author
+    Date created
+    int rating
+    int difficulty
+    String[] tags
+}
+
+enum SolutionStatus {
+    EMPTY
+    SUCCESS
+    FAILED
+    ERROR
+}
+
+class SharedSolution {
+    long solutionId
+    Challenge challenge
+    User author
+    SolutionStatus status
+    String implementation
+    String comment
+    Date created
+}
+
+class SharedTestResult {
+    String testName
+    SolutionStatus status
+    String message
+}
+
+class SharedSolutionComment {
+    long commentId
+    User author
+    String text
+    Date created
+    List<User> likes
+}
+
+
+Challenge -> User
+SharedSolution -> Challenge
+User <- SharedSolution
+SharedSolution <-> User
+SharedSolution -- SolutionStatus
+SharedSolution *-- SharedTestResult
+SolutionStatus -- SharedTestResult
+SharedSolutionComment --> SharedSolution
+SharedSolutionComment -> User
+SharedSolutionComment <-> User
+
+
+@enduml
