@@ -1,5 +1,6 @@
 package ru.foobarbaz.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import ru.foobarbaz.entity.ChallengeList;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.logic.ChallengeListService;
 import ru.foobarbaz.web.dto.NewChallengeList;
+import ru.foobarbaz.web.view.ChallengeView;
 
 import java.util.stream.Collectors;
 
@@ -31,6 +33,7 @@ public class ChallengeListRestService {
         return challengeListService.getChallengeLists(pageable);
     }
 
+    @JsonView(ChallengeView.Status.class)
     @RequestMapping(path = "{listId}")
     public ChallengeList getChallengeList(@PathVariable long listId){
         return challengeListService.getChallengeList(listId);

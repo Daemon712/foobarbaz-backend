@@ -1,10 +1,12 @@
 package ru.foobarbaz.entity.challenge;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import ru.foobarbaz.constant.ChallengeStatus;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 import ru.foobarbaz.entity.user.User;
+import ru.foobarbaz.web.view.ChallengeView;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -21,6 +23,7 @@ public class Challenge {
     private Long challengeId;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JsonView(ChallengeView.Full.class)
     private ChallengeDetails details;
 
     @NotNull
@@ -29,29 +32,36 @@ public class Challenge {
 
     @NotNull
     @Size(min = 50, max = 300)
+    @JsonView(ChallengeView.Description.class)
     private String shortDescription;
 
     @NotNull
     @ManyToOne
+    @JsonView(ChallengeView.Short.class)
     private User author;
 
     @NotNull
+    @JsonView(ChallengeView.Short.class)
     private Date created;
 
     @Min(MIN_RATING)
     @Max(MAX_RATING)
+    @JsonView(ChallengeView.Short.class)
     private int rating;
 
     @Min(MIN_DIFFICULTY)
     @Max(MAX_DIFFICULTY)
+    @JsonView(ChallengeView.Short.class)
     private int difficulty;
 
     @ElementCollection
     @CollectionTable
     @Size(max = 5)
+    @JsonView(ChallengeView.Short.class)
     private Set<String> tags;
 
     @Transient
+    @JsonView(ChallengeView.Status.class)
     private ChallengeStatus status;
 
     public Challenge() {

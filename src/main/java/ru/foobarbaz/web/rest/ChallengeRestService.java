@@ -1,5 +1,6 @@
 package ru.foobarbaz.web.rest;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.web.dto.NewChallenge;
 import ru.foobarbaz.web.dto.TestRequest;
 import ru.foobarbaz.web.dto.UpdateRating;
+import ru.foobarbaz.web.view.ChallengeView;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -65,6 +67,7 @@ public class ChallengeRestService {
         return testService.executeTests(input.getTest(), input.getCode());
     }
 
+    @JsonView(ChallengeView.Full.class)
     @RequestMapping(value = "/{challengeId}", method = RequestMethod.GET)
     public Challenge getChallenge(@PathVariable Long challengeId){
         return challengeService.getChallengeDetails(challengeId).getChallenge();
@@ -91,6 +94,7 @@ public class ChallengeRestService {
         return ratingService.updateChallengeRating(rating);
     }
 
+    @JsonView(ChallengeView.Short.class)
     @RequestMapping
     public Page<Challenge> getChallenges(
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -102,16 +106,19 @@ public class ChallengeRestService {
         return challengeService.getChallenges(pageable);
     }
 
+    @JsonView(ChallengeView.Short.class)
     @RequestMapping("/author/{username}")
     public List<Challenge> getChallengesByAuthor(@PathVariable String username){
         return challengeService.getChallengesByAuthor(username);
     }
 
+    @JsonView(ChallengeView.Short.class)
     @RequestMapping("/bookmark/{username}")
     public List<Challenge> getBookmarkedChallenges(@PathVariable String username){
         return challengeService.getBookmarkedChallenges(username);
     }
 
+    @JsonView(ChallengeView.Description.class)
     @RequestMapping("/quick-search/{name}")
     public List<Challenge> quickSearch(@PathVariable String name){
         return challengeService.quickSearchChallenges(name);

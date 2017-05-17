@@ -1,6 +1,8 @@
 package ru.foobarbaz.entity.challenge.solution;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import ru.foobarbaz.constant.SolutionStatus;
+import ru.foobarbaz.web.view.SolutionView;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -16,10 +18,12 @@ public class BaseSolution {
 
     @ElementCollection
     @CollectionTable
+    @JsonView(SolutionView.Full.class)
     private List<TestResult> testResults;
 
     @NotNull
     @Size(max = 5000)
+    @JsonView(SolutionView.Full.class)
     private String implementation;
 
     public String getImplementation() {

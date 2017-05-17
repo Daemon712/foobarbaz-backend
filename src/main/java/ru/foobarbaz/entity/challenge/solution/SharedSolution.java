@@ -3,10 +3,12 @@ package ru.foobarbaz.entity.challenge.solution;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
 import ru.foobarbaz.entity.AbleToLikes;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.user.User;
+import ru.foobarbaz.web.view.SharedSolutionView;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,10 +30,12 @@ public class SharedSolution extends BaseSolution implements AbleToLikes{
     private ChallengeDetails challengeDetails;
 
     @Transient
+    @JsonView(SharedSolutionView.ChallengeInfo.class)
     private Challenge challenge;
 
     @NotNull
     @ManyToOne
+    @JsonView(SharedSolutionView.Author.class)
     private User author;
 
     @NotNull

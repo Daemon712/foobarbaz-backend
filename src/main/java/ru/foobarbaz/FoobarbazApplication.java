@@ -1,5 +1,6 @@
 package ru.foobarbaz;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.boot.SpringApplication;
@@ -18,6 +19,7 @@ public class FoobarbazApplication {
 	public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+		mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
 		return new MappingJackson2HttpMessageConverter(mapper);
 	}
 
