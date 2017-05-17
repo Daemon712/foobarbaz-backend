@@ -7,8 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.TagStatistic;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query( "select new ru.foobarbaz.entity.challenge.Challenge(c, s) " +
@@ -17,6 +20,13 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
             "on c.challengeId = s.pk.challengeId " +
             "and s.pk.username = :username")
     Page<Challenge> findAllWithStatus(@Param("username") String username, Pageable pageable);
+
+
+    @Query( "select s " +
+            "from ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus s " +
+            "where s.pk.username = :username " +
+            "and s.pk.challengeId in (:ids)")
+    Set<ChallengeUserStatus> findStatusesByIds(@Param("username") String username, @Param("ids") Collection<Long> ids);
 
     @Query( "select new ru.foobarbaz.entity.challenge.Challenge(c, s) " +
             "from Challenge c " +

@@ -28,10 +28,7 @@ import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.foobarbaz.constant.ChallengeRatingConst.MAX_RATING;
@@ -172,6 +169,21 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public List<Challenge> getChallenges() {
         return challengeRepository.findAll();
+    }
+
+    @Override
+    public void fillChallengeStatus(List<Challenge> challenges) {
+        List<Long> ids = challenges.stream().map(Challenge::getChallengeId).collect(Collectors.toList());
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Set<ChallengeUserStatus> statuses = challengeRepository.findStatusesByIds(username, ids);
+        for (Challenge c : challenges) {
+            for (ChallengeUserStatus s : statuses) {
+                if (c.getChallengeId() == s.getPk().getChallengeId()){
+                    c.setStatus(s.getStatus());
+                    break;
+                }
+            }
+        }
     }
 
     @Override
