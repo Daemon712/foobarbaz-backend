@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import ru.foobarbaz.entity.ChallengeList;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.logic.ChallengeListService;
+import ru.foobarbaz.logic.ChallengeService;
 import ru.foobarbaz.repo.ChallengeListRepository;
 
 import java.util.Date;
@@ -17,10 +18,14 @@ import java.util.Date;
 @Service
 public class ChallengeListServiceImpl implements ChallengeListService {
     private ChallengeListRepository repository;
+    private ChallengeService challengeService;
 
     @Autowired
-    public ChallengeListServiceImpl(ChallengeListRepository repository) {
+    public ChallengeListServiceImpl(
+            ChallengeListRepository repository,
+            ChallengeService challengeService) {
         this.repository = repository;
+        this.challengeService = challengeService;
     }
 
     @Override
@@ -40,6 +45,8 @@ public class ChallengeListServiceImpl implements ChallengeListService {
 
     @Override
     public ChallengeList getChallengeList(Long challengeListId) {
-        return repository.findById(challengeListId).orElseThrow(ResourceNotFoundException::new);
+        ChallengeList list = repository.findById(challengeListId).orElseThrow(ResourceNotFoundException::new);
+        challengeService.fillChallengeStatus(list.getChallenges());
+        return list;
     }
 }
