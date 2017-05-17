@@ -119,8 +119,8 @@ public class ChallengeRestService {
     }
 
     @JsonView(ChallengeView.Description.class)
-    @RequestMapping("/quick-search/{name}")
-    public List<Challenge> quickSearch(@PathVariable String name){
+    @RequestMapping("/quick-search")
+    public List<Challenge> quickSearch(@RequestParam(required = false) String name){
         return challengeService.quickSearchChallenges(name);
     }
 }
