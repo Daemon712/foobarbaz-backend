@@ -7,13 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import ru.foobarbaz.constant.*;
-import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
+import ru.foobarbaz.constant.ChallengeStatus;
+import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
-import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserDetails;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserRating;
+import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 import ru.foobarbaz.entity.challenge.solution.Solution;
 import ru.foobarbaz.entity.challenge.solution.SolutionPK;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
@@ -28,7 +29,10 @@ import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserChallengeDetailsRepository;
 
 import javax.transaction.Transactional;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.foobarbaz.constant.ChallengeRatingConst.MAX_RATING;
@@ -202,6 +206,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     public Page<Challenge> getChallenges(Pageable pageable) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return challengeRepository.findAllWithStatus(username, pageable);
+    }
+
+    @Override
+    public Page<Challenge> getChallenges(Pageable pageable, ChallengeRepository.ChallengeFilter filter) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return challengeRepository.findAllWithStatus(username, filter, pageable);
     }
 
     @Override

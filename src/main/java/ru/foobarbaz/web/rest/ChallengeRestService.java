@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import ru.foobarbaz.constant.ChallengeStatus;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserPK;
@@ -20,6 +21,7 @@ import ru.foobarbaz.exception.TestNotPassedException;
 import ru.foobarbaz.logic.ChallengeService;
 import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.logic.TestService;
+import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.web.dto.NewChallenge;
 import ru.foobarbaz.web.dto.TestRequest;
 import ru.foobarbaz.web.dto.UpdateRating;
@@ -27,6 +29,8 @@ import ru.foobarbaz.web.view.ChallengeView;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("api/challenges")
@@ -99,11 +103,24 @@ public class ChallengeRestService {
     public Page<Challenge> getChallenges(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "created") String field,
-            @RequestParam(required = false, defaultValue = "desc") String dir
+            @RequestParam(required = false, defaultValue = "desc") String dir,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(required = false) Integer difficulty,
+            @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String tag
     ){
         Sort sort = Sort.by(Sort.Direction.fromString(dir), field);
         PageRequest pageable = PageRequest.of(page, 10, sort);
-        return challengeService.getChallenges(pageable);
+        if (Stream.of(name, rating, difficulty, status, tag).allMatch(Objects::isNull)){
+            return challengeService.getChallenges(pageable);
+        } else {
+            if (name == null) name = "";
+            ChallengeStatus challengeStatus = status == null ? null : ChallengeStatus.values()[status];
+            ChallengeRepository.ChallengeFilter filter =
+                    new ChallengeRepository.ChallengeFilter(name, tag, challengeStatus, rating, difficulty);
+            return challengeService.getChallenges(pageable, filter);
+        }
     }
 
     @JsonView(ChallengeView.Short.class)
