@@ -29,11 +29,6 @@ public class ChallengeListServiceImpl implements ChallengeListService {
     }
 
     @Override
-    public Page<ChallengeList> getChallengeLists(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
-
-    @Override
     public ChallengeList createChallengeList(ChallengeList template) {
         ChallengeList challengeList = new ChallengeList();
         BeanUtils.copyProperties(template, challengeList);

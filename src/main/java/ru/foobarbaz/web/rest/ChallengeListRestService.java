@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.ChallengeList;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.logic.ChallengeListService;
+import ru.foobarbaz.repo.ChallengeListRepository;
 import ru.foobarbaz.web.dto.NewChallengeList;
 import ru.foobarbaz.web.view.ChallengeView;
 
@@ -19,18 +20,23 @@ import java.util.stream.Collectors;
 @RequestMapping("api/challenge-lists")
 public class ChallengeListRestService {
     private ChallengeListService challengeListService;
+    private ChallengeListRepository challengeListRepository;
 
     @Autowired
-    public ChallengeListRestService(ChallengeListService challengeListService) {
+    public ChallengeListRestService(ChallengeListService challengeListService, ChallengeListRepository challengeListRepository) {
         this.challengeListService = challengeListService;
+        this.challengeListRepository = challengeListRepository;
     }
 
     @RequestMapping
     public Page<ChallengeList> getChallengeLists(
-            @RequestParam(required = false, defaultValue = "0") Integer page){
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false) String search){
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         PageRequest pageable = PageRequest.of(page, 10, sort);
-        return challengeListService.getChallengeLists(pageable);
+        return search == null
+                ? challengeListRepository.findAll(pageable)
+                : challengeListRepository.findAllByNameContainsIgnoreCase(search, pageable);
     }
 
     @JsonView(ChallengeView.Status.class)
