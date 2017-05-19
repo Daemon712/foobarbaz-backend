@@ -181,6 +181,7 @@ public class ChallengeServiceImpl implements ChallengeService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Set<ChallengeUserStatus> statuses = challengeRepository.findStatusesByIds(username, ids);
         for (Challenge c : challenges) {
+            c.setStatus(ChallengeStatus.NOT_STARTED);
             for (ChallengeUserStatus s : statuses) {
                 if (c.getChallengeId() == s.getPk().getChallengeId()){
                     c.setStatus(s.getStatus());
