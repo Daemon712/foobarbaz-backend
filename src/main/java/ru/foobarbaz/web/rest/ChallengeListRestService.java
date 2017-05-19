@@ -9,11 +9,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.foobarbaz.entity.ChallengeList;
 import ru.foobarbaz.entity.challenge.Challenge;
+import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.logic.ChallengeListService;
 import ru.foobarbaz.repo.ChallengeListRepository;
 import ru.foobarbaz.web.dto.NewChallengeList;
 import ru.foobarbaz.web.view.ChallengeView;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,6 +45,11 @@ public class ChallengeListRestService {
     @RequestMapping(path = "{listId}")
     public ChallengeList getChallengeList(@PathVariable long listId){
         return challengeListService.getChallengeList(listId);
+    }
+
+    @RequestMapping(path = "author/{username}")
+    public List<ChallengeList> getChallengeListsByAuthor(@PathVariable String username){
+        return challengeListRepository.findAllByAuthorOrderByCreated(new User(username));
     }
 
     @RequestMapping(path = "random")
