@@ -45,6 +45,11 @@ public class ChallengeListRestService {
         return challengeListService.getChallengeList(listId);
     }
 
+    @RequestMapping(path = "random")
+    public ChallengeList getRandomChallengeList(){
+        return challengeListService.getRandomChallengeList();
+    }
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = RequestMethod.POST)
     public Long createChallengeList(@RequestBody NewChallengeList input){
