@@ -6,7 +6,7 @@
 	<groupId>ru.foobarbaz</groupId>
 	<artifactId>foobarbaz</artifactId>
 	<version>0.0.2</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>foobarbaz</name>
 	<description>FooBarBaz</description>
