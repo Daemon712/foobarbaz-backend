@@ -27,8 +27,7 @@ import java.util.stream.Collectors;
 @Service
 public class TestServiceImpl implements TestService {
 
-//    private static final Path APP_TEMP_DIR = Paths.get(System.getProperty("user.home"), ".foobarbaz");
-    private static final Path APP_TEMP_DIR = Paths.get("/foobarbaz").toAbsolutePath();
+    private static final Path APP_TEMP_DIR = Paths.get(System.getProperty("user.home"), ".foobarbaz");
     private static final Path TEST_RUNNER_JAR = APP_TEMP_DIR.resolve("test-runner.jar");
 
     private static final String CLASS_NAME_GROUP = "name";
