@@ -17,6 +17,7 @@ import ru.foobarbaz.logic.UserService;
 import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserRepository;
 import ru.foobarbaz.web.dto.NewUser;
+import ru.foobarbaz.web.dto.UpdateUserInfo;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -68,6 +69,28 @@ public class UserRestService {
     public ResponseEntity<UserAccount> getUser(@PathVariable String username){
         UserAccount user = accountRepository.findById(username).orElseThrow(ResourceNotFoundException::new);
         return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "account/{username}", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'UserAccount', 'w')")
+    public UserAccount modifyUserInfo(@PathVariable String username, @RequestBody UpdateUserInfo userInfo){
+        User user = new User();
+        user.setUsername(username);
+        user.setName(userInfo.getName());
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUser(user);
+        userAccount.setUsername(username);
+        userAccount.setDescription(userInfo.getDescription());
+        return userService.modifyUserInfo(userAccount);
+    }
+
+    @RequestMapping(value = "account/{username}/password", method = RequestMethod.POST)
+    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'User', 'w')")
+    public void modifyUserPassword(@PathVariable String username, @RequestBody String password){
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        userService.modifyUserPassword(user);
     }
 
     @RequestMapping

@@ -17,6 +17,7 @@ public class NewUser {
     @Size(max = 50)
     private String name;
 
+    @Size(max = 200)
     private String description;
 
     public NewUser(){

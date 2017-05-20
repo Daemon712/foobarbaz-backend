@@ -3,6 +3,7 @@ package ru.foobarbaz.entity.comment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.foobarbaz.entity.AbleToLikes;
+import ru.foobarbaz.entity.HasAuthor;
 import ru.foobarbaz.entity.user.User;
 
 import javax.persistence.*;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 @MappedSuperclass
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class BaseComment implements AbleToLikes{
+public abstract class BaseComment implements AbleToLikes, HasAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")

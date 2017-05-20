@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import ru.foobarbaz.entity.AbleToLikes;
+import ru.foobarbaz.entity.HasAuthor;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.challenge.ChallengeDetails;
 import ru.foobarbaz.entity.user.User;
@@ -18,7 +19,7 @@ import java.util.Set;
 
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SharedSolution extends BaseSolution implements AbleToLikes{
+public class SharedSolution extends BaseSolution implements AbleToLikes, HasAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")

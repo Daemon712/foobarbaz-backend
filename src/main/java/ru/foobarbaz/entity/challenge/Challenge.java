@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import ru.foobarbaz.constant.ChallengeStatus;
+import ru.foobarbaz.entity.HasAuthor;
 import ru.foobarbaz.entity.challenge.personal.ChallengeUserStatus;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.web.view.ChallengeView;
@@ -16,7 +17,7 @@ import java.util.Set;
 import static ru.foobarbaz.constant.ChallengeRatingConst.*;
 
 @Entity
-public class Challenge {
+public class Challenge implements HasAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")

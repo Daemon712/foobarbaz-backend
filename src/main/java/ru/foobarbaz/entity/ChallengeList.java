@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class ChallengeList {
+public class ChallengeList implements HasAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
