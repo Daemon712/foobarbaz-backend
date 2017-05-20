@@ -35,6 +35,9 @@ public class UserAccount {
     private int sharedSolutions;
 
     @Min(0)
+    private int challengeLists;
+
+    @Min(0)
     private int rating;
 
     public UserAccount() {
@@ -94,6 +97,14 @@ public class UserAccount {
 
     public void setSharedSolutions(int sharedSolutions) {
         this.sharedSolutions = sharedSolutions;
+    }
+
+    public int getChallengeLists() {
+        return challengeLists;
+    }
+
+    public void setChallengeLists(int challengeLists) {
+        this.challengeLists = challengeLists;
     }
 
     public int getRating() {
