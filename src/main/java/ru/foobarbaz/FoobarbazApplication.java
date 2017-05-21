@@ -8,7 +8,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+
+import java.util.Collections;
 
 @SpringBootApplication
 public class FoobarbazApplication extends SpringBootServletInitializer {
@@ -28,6 +32,13 @@ public class FoobarbazApplication extends SpringBootServletInitializer {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
 		return new MappingJackson2HttpMessageConverter(mapper);
+	}
+
+	@Bean
+	public ByteArrayHttpMessageConverter byteArrayHttpMessageConverter() {
+		ByteArrayHttpMessageConverter converter = new ByteArrayHttpMessageConverter();
+		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.IMAGE_PNG));
+		return converter;
 	}
 
 }
