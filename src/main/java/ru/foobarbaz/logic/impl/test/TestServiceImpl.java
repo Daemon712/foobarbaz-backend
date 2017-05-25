@@ -2,6 +2,8 @@ package ru.foobarbaz.logic.impl.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.foobarbaz.constant.SolutionStatus;
 import ru.foobarbaz.entity.challenge.solution.TestResult;
@@ -26,9 +28,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class TestServiceImpl implements TestService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestServiceImpl.class);
 
-    private static final Path APP_TEMP_DIR = Paths.get(System.getProperty("user.home"), ".foobarbaz");
-    private static final Path TEST_RUNNER_JAR = APP_TEMP_DIR.resolve("test-runner.jar");
+    private static final Path APP_DIR = Paths.get(System.getProperty("user.home"), ".foobarbaz");
+    private static final Path TEST_RUNNER_JAR = APP_DIR.resolve("test-runner.jar");
 
     private static final String CLASS_NAME_GROUP = "name";
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("public +class +(?<" + CLASS_NAME_GROUP + ">\\w+)");
@@ -38,21 +41,28 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public List<TestResult> executeTests(String test, String impl) {
+        LOGGER.trace("executeTests.\nTest:\n{}\n\nImpl:\n{}\n", test, impl);
+        Path temp = null;
         try {
-            if (!Files.exists(APP_TEMP_DIR)) Files.createDirectory(APP_TEMP_DIR);
-            Path root = Files.createTempDirectory(APP_TEMP_DIR, "");
+            if (!Files.exists(APP_DIR)) Files.createDirectory(APP_DIR);
+            temp = Files.createTempDirectory(APP_DIR, "");
+            LOGGER.trace("temp directory {} has been created", temp);
 
             String testClassName = parseClassName(test);
+            LOGGER.trace("testClassName = {}", testClassName);
             String implClassName = parseClassName(impl);
+            LOGGER.trace("implClassName = {}", implClassName);
 
-            compile(root, implClassName, impl);
-            compile(root, testClassName, test);
+            compile(temp, implClassName, impl);
+            compile(temp, testClassName, test);
 
-            String runTestCommand = getRunTestCommand(root, testClassName);
+            String runTestCommand = getRunTestCommand(temp, testClassName);
+            LOGGER.trace("execute command {}", runTestCommand);
             Process runTestProcess = Runtime.getRuntime().exec(runTestCommand);
             byte[] data = read(runTestProcess.getInputStream());
             runTestProcess.waitFor(5, TimeUnit.SECONDS);
 
+            LOGGER.trace("test result:\n{}\n", new String(data));
             Result result =resultReader.readValue(data);
             return result.getItems().stream().map(converter).collect(Collectors.toList());
         } catch (CompilationException e){
@@ -61,21 +71,24 @@ public class TestServiceImpl implements TestService {
         } catch (Exception e){
             throw new RuntimeException(e);
         } finally {
-            tryToClearAppDir();
+            if (temp != null) tryCleanTemp(temp);
         }
     }
 
     private void compile(Path root, String className, String source) throws Exception{
         Path implFile = root.resolve(className + ".java");
         Files.write(implFile, source.getBytes());
-        String compileImplCommand = getCompileCommand(root, className);
-        Process compileImplProcess = Runtime.getRuntime().exec(compileImplCommand);
-        String compileImplError = new String(read(compileImplProcess.getErrorStream()));
-        compileImplProcess.waitFor(5, TimeUnit.SECONDS);
-        if (!compileImplError.isEmpty()) {
-            String message = compileImplError.replace(root.toString(), "").trim();
+        String compileCommand = getCompileCommand(root, className);
+        LOGGER.trace("execute command {}", compileCommand);
+        Process compileProcess = Runtime.getRuntime().exec(compileCommand);
+        String compileError = new String(read(compileProcess.getErrorStream()));
+        compileProcess.waitFor(5, TimeUnit.SECONDS);
+        if (!compileError.isEmpty()) {
+            String message = compileError.replace(root.toString(), "").trim();
+            LOGGER.warn("class {} has compilation error: {}", className, compileError);
             throw new CompilationException(className, message);
         }
+        LOGGER.trace("class {} has been compiled", className);
     }
 
     private byte[] read(InputStream inputStream) throws IOException {
@@ -100,21 +113,17 @@ public class TestServiceImpl implements TestService {
         return MessageFormat.format("javac -cp {0};{1} {1}\\{2}.java", TEST_RUNNER_JAR, root, className);
     }
 
-    private void tryToClearAppDir(){
+    private void tryCleanTemp(Path root){
         try {
-            Files.walk(APP_TEMP_DIR).sorted(Comparator.reverseOrder()).forEach(path -> {
+            Files.walk(root).sorted(Comparator.reverseOrder()).forEach(path -> {
                 try {
-                    if (APP_TEMP_DIR.equals(path)) return;
-                    if (TEST_RUNNER_JAR.equals(path)) return;
                     Files.deleteIfExists(path);
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    //TODO log the error
+                    LOGGER.error("error during delete {}", path);
                 }
             });
         } catch (IOException e) {
-            e.printStackTrace();
-            //TODO log the error
+            LOGGER.error("error during walk {}", root);
         }
     }
 
