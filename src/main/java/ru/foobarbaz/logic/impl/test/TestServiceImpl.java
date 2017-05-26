@@ -10,16 +10,14 @@ import ru.foobarbaz.entity.challenge.solution.TestResult;
 import ru.foobarbaz.exception.CompilationException;
 import ru.foobarbaz.logic.TestService;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -106,11 +104,21 @@ public class TestServiceImpl implements TestService {
     }
 
     private String getRunTestCommand(Path root, String className) {
-        return MessageFormat.format("java -cp {0};{1} ru.foobarbaz.testrunner.Main {2}", TEST_RUNNER_JAR, root, className);
+        String classpath = buildClassPath(root);
+        return MessageFormat.format("java -cp {0} ru.foobarbaz.testrunner.Main {1}", classpath, className);
     }
 
     private String getCompileCommand(Path root, String className) {
-        return MessageFormat.format("javac -cp {0};{1} {1}\\{2}.java", TEST_RUNNER_JAR, root, className);
+        String classpath = buildClassPath(root);
+        String fullClassName = root.resolve(className) + ".java";
+        return MessageFormat.format("javac -cp {0} {1}", classpath, fullClassName);
+    }
+
+    private String buildClassPath(Path root){
+        return new StringJoiner(File.pathSeparator)
+                .add(TEST_RUNNER_JAR.toString())
+                .add(root.toString())
+                .toString();
     }
 
     private void tryCleanTemp(Path root){
