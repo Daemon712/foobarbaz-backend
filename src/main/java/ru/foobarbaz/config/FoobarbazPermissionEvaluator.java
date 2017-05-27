@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 import ru.foobarbaz.entity.HasAuthor;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.entity.user.UserRole;
 
 import java.io.Serializable;
 
@@ -24,6 +25,9 @@ public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        return !(User.class.getSimpleName().equals(targetType) || UserAccount.class.getSimpleName().equals(targetType)) || authentication.getName().equals(targetId);
+        return (User.class.getSimpleName().equals(targetType) || UserAccount.class.getSimpleName().equals(targetType))
+                && authentication.getName().equals(targetId) && ("password".equals(permission) || "modify".equals(permission))
+                || authentication.getAuthorities().contains(UserRole.MODERATOR) && permission.equals("modify")
+                || authentication.getAuthorities().contains(UserRole.ADMINISTRATOR);
     }
 }

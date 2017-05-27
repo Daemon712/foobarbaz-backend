@@ -28,6 +28,10 @@ public class User {
     @Size(max = 50)
     private String name;
 
+    @NotNull
+    @Enumerated
+    private UserRole role;
+
     public User() {
     }
 
@@ -70,6 +74,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     @Override

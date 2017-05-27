@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.entity.user.UserRole;
 import ru.foobarbaz.logic.UserService;
 import ru.foobarbaz.repo.UserAccountRepository;
 import ru.foobarbaz.repo.UserRepository;
@@ -46,6 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String encryptedPassword = passwordEncoder.encode(template.getUser().getPassword());
         user.setPassword(encryptedPassword);
         user.setName(template.getUser().getName());
+        user.setRole(UserRole.USER);
         userRepository.save(user);
 
         UserAccount account = new UserAccount();
@@ -86,7 +88,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.emptyList()
+                Collections.singletonList(user.getRole())
         );
     }
 }

@@ -87,13 +87,13 @@ public class UserRestService {
     }
 
     @PostMapping(value = "account/{username}/photo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'User', 'w')")
+    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'User', 'modify')")
     public void uploadUserPhoto(@PathVariable String username, @RequestParam MultipartFile file) throws IOException {
         userPhotoService.uploadPhoto(username, file.getBytes());
     }
 
     @RequestMapping(value = "account/{username}", method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'UserAccount', 'w')")
+    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'UserAccount', 'modify')")
     public UserAccount modifyUserInfo(@PathVariable String username, @RequestBody UpdateUserInfo userInfo){
         User user = new User();
         user.setUsername(username);
@@ -106,7 +106,7 @@ public class UserRestService {
     }
 
     @RequestMapping(value = "account/{username}/password", method = RequestMethod.POST)
-    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'User', 'w')")
+    @PreAuthorize("isAuthenticated() && hasPermission(#username, 'User', 'password')")
     public void modifyUserPassword(@PathVariable String username, @RequestBody String password){
         User user = new User();
         user.setUsername(username);
