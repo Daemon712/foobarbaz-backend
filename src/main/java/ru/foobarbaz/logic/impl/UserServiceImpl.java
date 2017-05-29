@@ -2,7 +2,6 @@ package ru.foobarbaz.logic.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,8 +50,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepository.save(user);
 
         UserAccount account = new UserAccount();
-        BeanUtils.copyProperties(template, account);
+        account.setUser(user);
         account.setUsername(username);
+        account.setDescription(template.getDescription());
         account.setRegistrationDate(new Date());
         accountRepository.save(account);
 
