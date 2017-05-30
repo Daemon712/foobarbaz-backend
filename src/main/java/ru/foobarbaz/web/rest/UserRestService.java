@@ -26,6 +26,9 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Order.asc;
+import static org.springframework.data.domain.Sort.Order.desc;
+
 @RestController
 @RequestMapping("api/users")
 public class UserRestService {
@@ -118,7 +121,7 @@ public class UserRestService {
     public Page<UserAccount> getAllUsers(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false) String search){
-        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "rating"));
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by(desc("rating"), asc("registrationDate")));
         return search == null
                 ? accountRepository.findAll(pageRequest)
                 : accountRepository.findAllByUsernameContainsIgnoreCaseOrUserNameContainsIgnoreCase(search, search, pageRequest);
