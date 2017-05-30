@@ -10,14 +10,16 @@ import java.util.List;
 
 public interface ChallengeService {
     Challenge createChallenge(Challenge challenge);
-    Challenge getChallenge(Long challengeId);
-    ChallengeDetails getChallengeDetails(Long challengeId);
+    Challenge getChallenge(long challengeId);
+    ChallengeDetails getChallengeDetails(long challengeId);
+    Challenge updateChallenge(Challenge challenge);
+    void deleteChallenge(long challengeId);
     List<Challenge> getChallenges();
     Page<Challenge> getChallenges(Pageable pageable);
     Page<Challenge> getChallenges(Pageable pageable, ChallengeRepository.ChallengeFilter filter);
     List<Challenge> getChallengesByAuthor(String username);
     List<Challenge> getBookmarkedChallenges(String username);
     List<Challenge> quickSearchChallenges(String name);
-    void updateChallengeBookmark(Long challengeId, boolean bookmark);
+    void updateChallengeBookmark(long challengeId, boolean bookmark);
     void fillChallengeStatus(List<Challenge> challenges);
 }

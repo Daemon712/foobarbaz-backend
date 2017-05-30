@@ -24,6 +24,7 @@ import ru.foobarbaz.logic.TestService;
 import ru.foobarbaz.repo.ChallengeRepository;
 import ru.foobarbaz.web.dto.NewChallenge;
 import ru.foobarbaz.web.dto.TestRequest;
+import ru.foobarbaz.web.dto.UpdateChallenge;
 import ru.foobarbaz.web.dto.UpdateRating;
 import ru.foobarbaz.web.view.ChallengeView;
 
@@ -58,6 +59,27 @@ public class ChallengeRestService {
 
         Challenge newChallenge = challengeService.createChallenge(challenge);
         return new ResponseEntity<>(newChallenge.getChallengeId(), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("isAuthenticated() && hasPermission(#challengeId, 'Challenge', 'modify')")
+    @PutMapping("{challengeId}")
+    public Challenge updateChallenge(@PathVariable long challengeId, @Valid @RequestBody UpdateChallenge input){
+        Challenge challenge = new Challenge();
+        challenge.setChallengeId(challengeId);
+        BeanUtils.copyProperties(input, challenge);
+
+        ChallengeDetails details = new ChallengeDetails();
+        BeanUtils.copyProperties(input, details);
+        challenge.setDetails(details);
+
+        return challengeService.updateChallenge(challenge);
+    }
+
+    @PreAuthorize("isAuthenticated() && hasPermission(#challengeId, 'Challenge', 'modify')")
+    @DeleteMapping("{challengeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteChallenge(@PathVariable long challengeId){
+        challengeService.deleteChallenge(challengeId);
     }
 
     @ExceptionHandler(TestNotPassedException.class)

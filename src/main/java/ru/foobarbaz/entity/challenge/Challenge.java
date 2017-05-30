@@ -25,6 +25,7 @@ public class Challenge implements HasAuthor {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonView(ChallengeView.Full.class)
+    @JoinColumn(name = "challengeId")
     private ChallengeDetails details;
 
     @NotNull

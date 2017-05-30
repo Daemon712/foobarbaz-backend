@@ -3,13 +3,11 @@ package ru.foobarbaz.web.dto;
 import ru.foobarbaz.constant.AccessOption;
 
 import javax.persistence.Enumerated;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
-import static ru.foobarbaz.constant.ChallengeRatingConst.MAX_DIFFICULTY;
-import static ru.foobarbaz.constant.ChallengeRatingConst.MIN_DIFFICULTY;
-
-public class NewChallenge {
+public class UpdateChallenge {
     @NotNull
     @Size(min = 4, max = 50)
     private String name;
@@ -21,22 +19,6 @@ public class NewChallenge {
     @NotNull
     @Size(min = 100, max = 5000)
     private String fullDescription;
-
-    @Min(MIN_DIFFICULTY)
-    @Max(MAX_DIFFICULTY)
-    private int difficulty;
-
-    @NotNull
-    @Size(max = 5000)
-    private String template;
-
-    @NotNull
-    @Size(max = 10000)
-    private String unitTest;
-
-    @NotNull
-    @Size(max = 5000)
-    private String sample;
 
     @NotNull
     @Enumerated
@@ -71,38 +53,6 @@ public class NewChallenge {
 
     public void setFullDescription(String fullDescription) {
         this.fullDescription = fullDescription;
-    }
-
-    public int getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(int difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public String getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public String getUnitTest() {
-        return unitTest;
-    }
-
-    public void setUnitTest(String unitTest) {
-        this.unitTest = unitTest;
-    }
-
-    public String getSample() {
-        return sample;
-    }
-
-    public void setSample(String sample) {
-        this.sample = sample;
     }
 
     public AccessOption getCommentAccess() {

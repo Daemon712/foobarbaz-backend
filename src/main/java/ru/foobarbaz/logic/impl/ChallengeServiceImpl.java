@@ -135,7 +135,7 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public void updateChallengeBookmark(Long challengeId, boolean bookmark) {
+    public void updateChallengeBookmark(long challengeId, boolean bookmark) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         ChallengeUserPK pk = new ChallengeUserPK(username, challengeId);
         ChallengeUserDetails userChallengeDetails = new ChallengeUserDetails(pk);
@@ -144,12 +144,12 @@ public class ChallengeServiceImpl implements ChallengeService {
     }
 
     @Override
-    public Challenge getChallenge(Long challengeId) {
+    public Challenge getChallenge(long challengeId) {
         return challengeRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
     }
 
     @Override
-    public ChallengeDetails getChallengeDetails(Long challengeId) {
+    public ChallengeDetails getChallengeDetails(long challengeId) {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         ChallengeUserDetails userDetails = userDetailsRepository.findById(new ChallengeUserPK(user, challengeId)).orElse(null);
 
@@ -168,6 +168,26 @@ public class ChallengeServiceImpl implements ChallengeService {
         details.setUserDetails(userDetails);
         details.getChallenge().setDetails(details);
         return details;
+    }
+
+    @Override
+    public Challenge updateChallenge(Challenge update) {
+        ChallengeDetails details = detailsRepository.findById(update.getChallengeId())
+                .orElseThrow(ResourceNotFoundException::new);
+        Challenge challenge = details.getChallenge();
+        challenge.setName(update.getName());
+        challenge.setShortDescription(update.getShortDescription());
+        challenge.setTags(update.getTags());
+        challenge.setDetails(details);
+        details.setFullDescription(update.getDetails().getFullDescription());
+        details.setCommentAccess(update.getDetails().getCommentAccess());
+        details.setShareAccess(update.getDetails().getShareAccess());
+        return challengeRepository.save(challenge);
+    }
+
+    @Override
+    public void deleteChallenge(long challengeId) {
+        challengeRepository.deleteById(challengeId);
     }
 
     @Override
