@@ -39,7 +39,7 @@ public class SharedSolutionRestService {
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/{sharedSolutionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{sharedSolutionId}/like", method = RequestMethod.POST)
     public int updateLike(
             @PathVariable Long sharedSolutionId,
             @RequestBody String like) {

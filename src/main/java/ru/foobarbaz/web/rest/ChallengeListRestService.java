@@ -41,7 +41,7 @@ public class ChallengeListRestService {
                 : challengeListRepository.findAllByNameContainsIgnoreCase(search, pageable);
     }
 
-    @JsonView(ChallengeView.Status.class)
+    @JsonView(ChallengeView.Short.class)
     @RequestMapping(path = "{listId}")
     public ChallengeList getChallengeList(@PathVariable long listId){
         return challengeListService.getChallengeList(listId);
@@ -65,5 +65,14 @@ public class ChallengeListRestService {
         template.setDescription(input.getDescription());
         template.setChallenges(input.getChallenges().stream().map(Challenge::new).collect(Collectors.toList()));
         return challengeListService.createChallengeList(template).getChallengeListId();
+    }
+
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(value = "/{sharedSolutionId}/like", method = RequestMethod.POST)
+    public int updateLike(
+            @PathVariable Long sharedSolutionId,
+            @RequestBody String like) {
+        return challengeListService.updateLike(sharedSolutionId, Boolean.valueOf(like)).getLikes().size();
     }
 }

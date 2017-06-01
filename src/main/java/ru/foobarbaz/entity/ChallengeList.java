@@ -1,5 +1,6 @@
 package ru.foobarbaz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.user.User;
@@ -9,9 +10,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-public class ChallengeList implements HasAuthor {
+public class ChallengeList implements HasAuthor, AbleToLikes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("id")
@@ -37,6 +39,10 @@ public class ChallengeList implements HasAuthor {
     @NotNull
     @Size(min = 3, max = 50)
     private List<Challenge> challenges;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private Set<User> likes;
 
     public Long getChallengeListId() {
         return challengeListId;
@@ -84,5 +90,13 @@ public class ChallengeList implements HasAuthor {
 
     public void setChallenges(List<Challenge> challenges) {
         this.challenges = challenges;
+    }
+
+    public Set<User> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Set<User> likes) {
+        this.likes = likes;
     }
 }
