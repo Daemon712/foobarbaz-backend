@@ -153,9 +153,9 @@ public class ChallengeServiceImpl implements ChallengeService {
         String user = SecurityContextHolder.getContext().getAuthentication().getName();
         ChallengeUserDetails userDetails = userDetailsRepository.findById(new ChallengeUserPK(user, challengeId)).orElse(null);
 
-        ChallengeDetails details = userDetails != null ?
-                userDetails.getChallengeDetails() :
-                detailsRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
+        ChallengeDetails details = userDetails != null
+                ? userDetails.getChallengeDetails()
+                : detailsRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
 
         details.setViews(details.getViews() + 1);
         detailsRepository.save(details);
