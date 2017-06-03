@@ -38,11 +38,28 @@ public class SharedSolutionRestService {
         return service.getSharedSolution(sharedSolutionId);
     }
 
+    @PreAuthorize("isAuthenticated() && hasPermission(#sharedSolutionId, 'SharedSolution', 'modify')")
+    @PostMapping(value = "/{sharedSolutionId}")
+    public SharedSolution updateSolutionComment(
+            @PathVariable long sharedSolutionId,
+            @RequestBody String newComment){
+        SharedSolution solution = new SharedSolution();
+        solution.setSharedSolutionId(sharedSolutionId);
+        solution.setComment(newComment);
+        return service.updateSolution(solution);
+    }
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{sharedSolutionId}/like", method = RequestMethod.POST)
     public int updateLike(
             @PathVariable Long sharedSolutionId,
             @RequestBody String like) {
         return service.updateLike(sharedSolutionId, Boolean.valueOf(like)).getLikes().size();
+    }
+
+    @PreAuthorize("isAuthenticated() && hasPermission(#sharedSolutionId, 'SharedSolution', 'modify')")
+    @DeleteMapping(value = "/{sharedSolutionId}")
+    public void deleteSharedSolution(@PathVariable long sharedSolutionId){
+        service.deleteSolution(sharedSolutionId);
     }
 }

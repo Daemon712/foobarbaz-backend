@@ -112,6 +112,19 @@ public class SharedSolutionServiceImpl implements SharedSolutionService {
         return sharedSolution;
     }
 
+    @Override
+    public SharedSolution updateSolution(SharedSolution template) {
+        SharedSolution sharedSolution = sharedSolutionRepository.findById(template.getSharedSolutionId())
+                .orElseThrow(ResourceNotFoundException::new);
+        sharedSolution.setComment(template.getComment());
+        return sharedSolutionRepository.save(sharedSolution);
+    }
+
+    @Override
+    public void deleteSolution(long sharedSolutionId) {
+        sharedSolutionRepository.deleteById(sharedSolutionId);
+    }
+
     private boolean challengeSolved(ChallengeUserDetails userDetails) {
         return userDetails.getStatus() != null && userDetails.getStatus().getStatus() == ChallengeStatus.SOLVED;
     }

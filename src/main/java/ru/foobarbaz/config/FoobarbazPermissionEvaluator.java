@@ -6,11 +6,11 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import ru.foobarbaz.entity.HasAuthor;
-import ru.foobarbaz.entity.challenge.Challenge;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
 import ru.foobarbaz.entity.user.UserRole;
 import ru.foobarbaz.repo.ChallengeRepository;
+import ru.foobarbaz.repo.SharedSolutionRepository;
 import ru.foobarbaz.repo.UserRepository;
 
 import java.io.Serializable;
@@ -19,6 +19,7 @@ import java.util.Optional;
 public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
     private UserRepository userRepository;
     private ChallengeRepository challengeRepository;
+    private SharedSolutionRepository sharedSolutionRepository;
 
     @Autowired
     @Required
@@ -44,9 +45,20 @@ public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
         if (authentication.getAuthorities().contains(UserRole.ADMINISTRATOR)) return true;
         if (authentication.getAuthorities().contains(UserRole.MODERATOR) && permission.equals("modify")) return true;
 
-        Optional<?> domainObject = Optional.empty();
-        if (User.class.getSimpleName().equals(targetType)) domainObject = userRepository.findById((String) targetId);
-        if (Challenge.class.getSimpleName().equals(targetType)) domainObject = challengeRepository.findById((long) targetId);
+        Optional<?> domainObject;
+        switch (targetType) {
+            case "User":
+                domainObject = userRepository.findById((String) targetId);
+                break;
+            case "Challenge":
+                domainObject = challengeRepository.findById((long) targetId);
+                break;
+            case "SharedSolution":
+                domainObject = sharedSolutionRepository.findById((long) targetId);
+                break;
+            default:
+                domainObject = Optional.empty();
+        }
         return hasPermission(authentication, domainObject.orElseThrow(ResourceNotFoundException::new), permission);
     }
 
