@@ -67,12 +67,31 @@ public class ChallengeListRestService {
         return challengeListService.createChallengeList(template).getChallengeListId();
     }
 
+    @PreAuthorize("isAuthenticated() && hasPermission(#challengeListId, 'ChallengeList', 'modify')")
+    @PostMapping(value = "/{challengeListId}")
+    @JsonView(ChallengeView.Short.class)
+    public ChallengeList updateChallengeList(
+            @PathVariable long challengeListId,
+            @RequestBody NewChallengeList input) {
+        ChallengeList template = new ChallengeList();
+        template.setChallengeListId(challengeListId);
+        template.setName(input.getName());
+        template.setDescription(input.getDescription());
+        template.setChallenges(input.getChallenges().stream().map(Challenge::new).collect(Collectors.toList()));
+        return challengeListService.updateChallengeList(template);
+    }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(value = "/{sharedSolutionId}/like", method = RequestMethod.POST)
+    @RequestMapping(value = "/{challengeListId}/like", method = RequestMethod.POST)
     public int updateLike(
-            @PathVariable Long sharedSolutionId,
+            @PathVariable long challengeListId,
             @RequestBody String like) {
-        return challengeListService.updateLike(sharedSolutionId, Boolean.valueOf(like)).getLikes().size();
+        return challengeListService.updateLike(challengeListId, Boolean.valueOf(like)).getLikes().size();
+    }
+
+    @PreAuthorize("isAuthenticated() && hasPermission(#challengeListId, 'ChallengeList', 'modify')")
+    @DeleteMapping(value = "/{challengeListId}")
+    public void deleteChallengeList(@PathVariable long challengeListId){
+        challengeListService.deleteChallengeList(challengeListId);
     }
 }

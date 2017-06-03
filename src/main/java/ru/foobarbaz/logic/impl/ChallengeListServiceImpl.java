@@ -70,6 +70,23 @@ public class ChallengeListServiceImpl implements ChallengeListService {
     }
 
     @Override
+    public ChallengeList updateChallengeList(ChallengeList template) {
+        ChallengeList challengeList = challengeListRepository.findById(template.getChallengeListId())
+                .orElseThrow(ResourceNotFoundException::new);
+        challengeList.setName(template.getName());
+        challengeList.setDescription(template.getDescription());
+        challengeList.setChallenges(template.getChallenges());
+        ChallengeList result = challengeListRepository.save(challengeList);
+        challengeService.fillChallengeStatus(result.getChallenges());
+        return result;
+    }
+
+    @Override
+    public void deleteChallengeList(long challengeListId) {
+        challengeListRepository.deleteById(challengeListId);
+    }
+
+    @Override
     public ChallengeList updateLike(long challengeListId, boolean like) {
         ChallengeList challengeList = challengeListRepository.findById(challengeListId)
                 .orElseThrow(ResourceNotFoundException::new);
