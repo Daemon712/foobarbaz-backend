@@ -9,9 +9,7 @@ import ru.foobarbaz.entity.HasAuthor;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
 import ru.foobarbaz.entity.user.UserRole;
-import ru.foobarbaz.repo.ChallengeRepository;
-import ru.foobarbaz.repo.SharedSolutionRepository;
-import ru.foobarbaz.repo.UserRepository;
+import ru.foobarbaz.repo.*;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -20,6 +18,8 @@ public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
     private UserRepository userRepository;
     private ChallengeRepository challengeRepository;
     private SharedSolutionRepository sharedSolutionRepository;
+    private ChallengeCommentRepository challengeCommentRepository;
+    private SolutionCommentRepository solutionCommentRepository;
 
     @Autowired
     @Required
@@ -31,6 +31,24 @@ public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
     @Required
     public void setChallengeRepository(ChallengeRepository challengeRepository) {
         this.challengeRepository = challengeRepository;
+    }
+
+    @Autowired
+    @Required
+    public void setSharedSolutionRepository(SharedSolutionRepository sharedSolutionRepository) {
+        this.sharedSolutionRepository = sharedSolutionRepository;
+    }
+
+    @Autowired
+    @Required
+    public void setChallengeCommentRepository(ChallengeCommentRepository challengeCommentRepository) {
+        this.challengeCommentRepository = challengeCommentRepository;
+    }
+
+    @Autowired
+    @Required
+    public void setSolutionCommentRepository(SolutionCommentRepository solutionCommentRepository) {
+        this.solutionCommentRepository = solutionCommentRepository;
     }
 
     @Override
@@ -45,21 +63,25 @@ public class FoobarbazPermissionEvaluator implements PermissionEvaluator {
         if (authentication.getAuthorities().contains(UserRole.ADMINISTRATOR)) return true;
         if (authentication.getAuthorities().contains(UserRole.MODERATOR) && permission.equals("modify")) return true;
 
-        Optional<?> domainObject;
+        Optional<?> domainObject = resolveDomainObject(targetId, targetType);
+        return hasPermission(authentication, domainObject.orElseThrow(ResourceNotFoundException::new), permission);
+    }
+
+    private Optional<?> resolveDomainObject(Serializable targetId, String targetType) {
         switch (targetType) {
             case "User":
-                domainObject = userRepository.findById((String) targetId);
-                break;
+                return userRepository.findById((String) targetId);
             case "Challenge":
-                domainObject = challengeRepository.findById((long) targetId);
-                break;
+                return challengeRepository.findById((long) targetId);
             case "SharedSolution":
-                domainObject = sharedSolutionRepository.findById((long) targetId);
-                break;
+                return sharedSolutionRepository.findById((long) targetId);
+            case "ChallengeComment":
+                return challengeCommentRepository.findById((long) targetId);
+            case "SharedSolutionComment":
+                return solutionCommentRepository.findById((long) targetId);
             default:
-                domainObject = Optional.empty();
+                return Optional.empty();
         }
-        return hasPermission(authentication, domainObject.orElseThrow(ResourceNotFoundException::new), permission);
     }
 
     private boolean checkDomainPermission(Authentication authentication, Object domainObject){

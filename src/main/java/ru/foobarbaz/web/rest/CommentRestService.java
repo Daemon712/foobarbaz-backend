@@ -54,14 +54,45 @@ public class CommentRestService {
         return solutionCommentService.addComment(solutionComment);
     }
 
+    @PreAuthorize("hasPermission(#commentId, 'ChallengeComment', 'modify')")
+    @PostMapping("challenge/{commentId}")
+    public ChallengeComment updateChallengeComment(@PathVariable long commentId, @RequestBody String text) {
+        ChallengeComment comment = new ChallengeComment();
+        comment.setCommentId(commentId);
+        comment.setText(text);
+        return challengeCommentService.updateComment(comment);
+    }
+
+    @PreAuthorize("hasPermission(#commentId, 'SharedSolutionComment', 'modify')")
+    @PostMapping("solution/{commentId}")
+    public SharedSolutionComment updateSolutionComment(@PathVariable long commentId, @RequestBody String text) {
+        SharedSolutionComment comment = new SharedSolutionComment();
+        comment.setCommentId(commentId);
+        comment.setText(text);
+        return solutionCommentService.updateComment(comment);
+    }
+
+
+    @PreAuthorize("hasPermission(#commentId, 'ChallengeComment', 'modify')")
+    @DeleteMapping("challenge/{commentId}")
+    public void deleteChallengeComment(@PathVariable long commentId) {
+        challengeCommentService.deleteComment(commentId);
+    }
+
+    @PreAuthorize("hasPermission(#commentId, 'SharedSolutionComment', 'modify')")
+    @DeleteMapping("solution/{commentId}")
+    public void deleteSolutionComment(@PathVariable long commentId) {
+        solutionCommentService.deleteComment(commentId);
+    }
+
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(path = "challenge/{commentId}", method = RequestMethod.POST)
+    @PostMapping("challenge/{commentId}/like")
     public int likeChallengeComment(@PathVariable long commentId, @RequestBody String like) {
         return challengeCommentService.updateLikes(commentId, Boolean.parseBoolean(like));
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(path = "solution/{commentId}", method = RequestMethod.POST)
+    @PostMapping("solution/{commentId}/like")
     public int likeSolutionComment(@PathVariable long commentId, @RequestBody String like) {
         return solutionCommentService.updateLikes(commentId, Boolean.parseBoolean(like));
     }

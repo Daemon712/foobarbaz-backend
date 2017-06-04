@@ -12,6 +12,7 @@ import ru.foobarbaz.logic.RatingService;
 import ru.foobarbaz.repo.ChallengeCommentRepository;
 
 import javax.transaction.Transactional;
+import java.nio.file.ReadOnlyFileSystemException;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,19 @@ public class ChallengeCommentService implements CommentService<Challenge, Challe
         comment.setAuthor(new User(username));
         comment.setCreated(new Date());
         return challengeCommentRepository.save(comment);
+    }
+
+    @Override
+    public ChallengeComment updateComment(ChallengeComment template) {
+        ChallengeComment comment = challengeCommentRepository.findById(template.getCommentId())
+                .orElseThrow(ReadOnlyFileSystemException::new);
+        comment.setText(template.getText());
+        return challengeCommentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(long commentId) {
+        challengeCommentRepository.deleteById(commentId);
     }
 
     @Override

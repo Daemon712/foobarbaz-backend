@@ -42,6 +42,19 @@ public class SolutionCommentService implements CommentService<SharedSolution, Sh
     }
 
     @Override
+    public SharedSolutionComment updateComment(SharedSolutionComment template) {
+        SharedSolutionComment comment = solutionCommentRepository.findById(template.getCommentId())
+                .orElseThrow(ResourceNotFoundException::new);
+        comment.setText(template.getText());
+        return solutionCommentRepository.save(comment);
+    }
+
+    @Override
+    public void deleteComment(long commentId) {
+        solutionCommentRepository.deleteById(commentId);
+    }
+
+    @Override
     @Transactional
     public int updateLikes(Long commentId, boolean like) {
         SharedSolutionComment comment = solutionCommentRepository.findById(commentId)
