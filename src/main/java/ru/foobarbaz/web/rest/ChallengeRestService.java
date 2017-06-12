@@ -99,6 +99,12 @@ public class ChallengeRestService {
         return challengeService.getChallengeDetails(challengeId).getChallenge();
     }
 
+    @GetMapping(path = "random")
+    @JsonView(ChallengeView.Short.class)
+    public Challenge getRandomChallenge(){
+        return challengeService.getRandomChallenge();
+    }
+
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/{challengeId}/bookmark", method = RequestMethod.POST)
     public void updateChallengeBookmark(

@@ -3,6 +3,7 @@ package ru.foobarbaz.logic.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -146,6 +147,16 @@ public class ChallengeServiceImpl implements ChallengeService {
     @Override
     public Challenge getChallenge(long challengeId) {
         return challengeRepository.findById(challengeId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Override
+    public Challenge getRandomChallenge() {
+        long count = challengeRepository.count();
+        if (count == 0) return null;
+        int index = (int) Math.floor(Math.random() * count);
+        Page<Challenge> page = challengeRepository.findAll(PageRequest.of(index, 1));
+        fillChallengeStatus(page.getContent());
+        return page.getContent().get(0);
     }
 
     @Override

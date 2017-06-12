@@ -11,6 +11,7 @@ import java.util.List;
 public interface ChallengeService {
     Challenge createChallenge(Challenge challenge);
     Challenge getChallenge(long challengeId);
+    Challenge getRandomChallenge();
     ChallengeDetails getChallengeDetails(long challengeId);
     Challenge updateChallenge(Challenge challenge);
     void deleteChallenge(long challengeId);
