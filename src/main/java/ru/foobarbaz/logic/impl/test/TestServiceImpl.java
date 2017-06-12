@@ -33,6 +33,7 @@ public class TestServiceImpl implements TestService {
 
     private static final String CLASS_NAME_GROUP = "name";
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("public +class +(?<" + CLASS_NAME_GROUP + ">\\w+)");
+    private static final Pattern RESULT_PATTERN = Pattern.compile("\\{.+}");
 
     private Function<ResultItem, TestResult> converter = new TestRunResultConverter();
     private ObjectReader resultReader = new ObjectMapper().readerFor(Result.class);
@@ -57,10 +58,12 @@ public class TestServiceImpl implements TestService {
             String runTestCommand = getRunTestCommand(temp, testClassName);
             LOGGER.trace("execute command {}", runTestCommand);
             Process runTestProcess = Runtime.getRuntime().exec(runTestCommand);
-            byte[] data = read(runTestProcess.getInputStream());
-            runTestProcess.waitFor(5, TimeUnit.SECONDS);
+            runTestProcess.waitFor(3, TimeUnit.SECONDS);
+            String data = new String(read(runTestProcess.getInputStream()));
+            Matcher matcher = RESULT_PATTERN.matcher(data);
+            while (matcher.find()) data = matcher.group();
 
-            LOGGER.trace("test result:\n{}\n", new String(data));
+            LOGGER.trace("test result:\n{}\n", data);
             Result result = resultReader.readValue(data);
             return result.getItems().stream().map(converter).collect(Collectors.toList());
         } catch (CompilationException e) {
@@ -80,8 +83,8 @@ public class TestServiceImpl implements TestService {
         String compileCommand = getCompileCommand(root, className);
         LOGGER.trace("execute command {}", compileCommand);
         Process compileProcess = Runtime.getRuntime().exec(compileCommand);
+        compileProcess.waitFor(3, TimeUnit.SECONDS);
         String compileError = new String(read(compileProcess.getErrorStream()));
-        compileProcess.waitFor(5, TimeUnit.SECONDS);
         if (!compileError.isEmpty()) {
             String message = compileError.replace(root.toString(), "").trim();
             LOGGER.warn("class {} has compilation error: {}", className, compileError);
@@ -91,7 +94,7 @@ public class TestServiceImpl implements TestService {
     }
 
     private byte[] read(InputStream inputStream) throws IOException {
-        int len = 1024 * 8;
+        int len = inputStream.available();
         byte[] b = new byte[len];
         int total = 0;
         while (total < len) {
