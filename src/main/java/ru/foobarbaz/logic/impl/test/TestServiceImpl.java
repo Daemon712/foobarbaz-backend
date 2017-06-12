@@ -61,19 +61,20 @@ public class TestServiceImpl implements TestService {
             runTestProcess.waitFor(5, TimeUnit.SECONDS);
 
             LOGGER.trace("test result:\n{}\n", new String(data));
-            Result result =resultReader.readValue(data);
+            Result result = resultReader.readValue(data);
             return result.getItems().stream().map(converter).collect(Collectors.toList());
-        } catch (CompilationException e){
+        } catch (CompilationException e) {
             String testName = "compilationError(" + e.getClassName() + ")";
-            return Collections.singletonList(new TestResult(testName, SolutionStatus.ERROR, e.getMessage()));
-        } catch (Exception e){
+            //noinspection ArraysAsListWithZeroOrOneArgument
+            return Arrays.asList(new TestResult(testName, SolutionStatus.ERROR, e.getMessage()));
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (temp != null) tryCleanTemp(temp);
         }
     }
 
-    private void compile(Path root, String className, String source) throws Exception{
+    private void compile(Path root, String className, String source) throws Exception {
         Path implFile = root.resolve(className + ".java");
         Files.write(implFile, source.getBytes());
         String compileCommand = getCompileCommand(root, className);
@@ -114,14 +115,14 @@ public class TestServiceImpl implements TestService {
         return MessageFormat.format("javac -cp {0} {1}", classpath, fullClassName);
     }
 
-    private String buildClassPath(Path root){
+    private String buildClassPath(Path root) {
         return new StringJoiner(File.pathSeparator)
                 .add(TEST_RUNNER_JAR.toString())
                 .add(root.toString())
                 .toString();
     }
 
-    private void tryCleanTemp(Path root){
+    private void tryCleanTemp(Path root) {
         try {
             Files.walk(root).sorted(Comparator.reverseOrder()).forEach(path -> {
                 try {
@@ -135,7 +136,7 @@ public class TestServiceImpl implements TestService {
         }
     }
 
-    private static String parseClassName(String source){
+    private static String parseClassName(String source) {
         Matcher m = CLASS_NAME_PATTERN.matcher(source);
         if (!m.find()) throw new CompilationException("...", "No class definition found in src:\n" + source);
         return m.group(CLASS_NAME_GROUP);
