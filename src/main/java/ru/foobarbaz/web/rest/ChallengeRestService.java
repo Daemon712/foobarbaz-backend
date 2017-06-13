@@ -139,7 +139,7 @@ public class ChallengeRestService {
             @RequestParam(required = false) String tag
     ){
         Sort sort = Sort.by(Sort.Direction.fromString(dir), field);
-        PageRequest pageable = PageRequest.of(page, 10, sort);
+        PageRequest pageable = PageRequest.of(page, 5, sort);
         if (Stream.of(name, rating, difficulty, status, tag).allMatch(Objects::isNull)){
             return challengeService.getChallenges(pageable);
         } else {

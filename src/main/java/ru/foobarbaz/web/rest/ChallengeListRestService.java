@@ -35,7 +35,7 @@ public class ChallengeListRestService {
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false) String search){
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
-        PageRequest pageable = PageRequest.of(page, 10, sort);
+        PageRequest pageable = PageRequest.of(page, 5, sort);
         return search == null
                 ? challengeListRepository.findAll(pageable)
                 : challengeListRepository.findAllByNameContainsIgnoreCase(search, pageable);
