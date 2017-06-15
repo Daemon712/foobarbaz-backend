@@ -7,4 +7,6 @@ public interface UserService {
     UserAccount createUser(UserAccount userAccount);
     UserAccount modifyUserInfo(UserAccount template);
     User modifyUserPassword(User template);
+    User modifyUserRole(User template);
+//    void deleteUser(String username);
 }

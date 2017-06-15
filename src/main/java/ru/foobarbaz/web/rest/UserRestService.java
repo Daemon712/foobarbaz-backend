@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.foobarbaz.entity.user.User;
 import ru.foobarbaz.entity.user.UserAccount;
+import ru.foobarbaz.entity.user.UserRole;
 import ru.foobarbaz.logic.UserPhotoService;
 import ru.foobarbaz.logic.UserService;
 import ru.foobarbaz.repo.UserAccountRepository;
@@ -116,6 +117,21 @@ public class UserRestService {
         user.setPassword(password);
         userService.modifyUserPassword(user);
     }
+
+    @PostMapping("account/{username}/role")
+    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
+    public User modifyUserRole(@PathVariable String username, @RequestBody String role){
+        User user = new User();
+        user.setUsername(username);
+        user.setRole(UserRole.valueOf(role.toUpperCase()));
+        return userService.modifyUserRole(user);
+    }
+
+//    @DeleteMapping("account/{username}")
+//    @PreAuthorize("hasAuthority('ADMINISTRATOR')")
+//    public void deleteUser(@PathVariable String username){
+//        userService.deleteUser(username);
+//    }
 
     @RequestMapping
     public Page<UserAccount> getAllUsers(

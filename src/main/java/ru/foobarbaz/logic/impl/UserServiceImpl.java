@@ -80,6 +80,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User modifyUserRole(User template) {
+        User user = userRepository.findById(template.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
+        user.setRole(template.getRole());
+        return userRepository.save(user);
+    }
+
+//    @Override
+//    public void deleteUser(String username) {
+//        userRepository.deleteById(username);
+//    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findById(username).orElse(null);
         if (user == null){
